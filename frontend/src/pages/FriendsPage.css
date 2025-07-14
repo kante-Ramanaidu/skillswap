@@ -1,0 +1,103 @@
+/* FriendsPage.css */
+
+.friends-container {
+  padding: 2rem;
+  max-width: 960px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.friends-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #9794c7; /* Indigo - consistent with app branding */
+  margin-bottom: 0.3rem;
+}
+
+.friends-subtitle {
+  font-size: 1rem;
+  color: #6b7280; /* Gray-600 */
+  margin-bottom: 2rem;
+}
+
+/* Friends Card List */
+.friends-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1.5rem;
+}
+
+/* Each Friend Card */
+.friend-card {
+  background: #ffffff;
+  padding: 1.25rem 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.friend-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+}
+
+/* Avatar Circle */
+.friend-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(to right, #6366f1, #8b5cf6);
+  color: white;
+  font-weight: 600;
+  font-size: 1.25rem;
+  text-align: center;
+  line-height: 48px;
+}
+
+/* Friend Info Text */
+.friend-info {
+  flex: 1;
+  text-align: left;
+}
+
+.friend-info h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0 0 0.3rem 0;
+}
+
+/* Study Room Button */
+.study-btn {
+  background: #9794c7;
+  border: none;
+  padding: 0.5rem 1rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.study-btn:hover {
+  background: linear-gradient(to right, #4338ca, #6d28d9);
+}
+
+/* Mobile Responsive */
+@media screen and (max-width: 600px) {
+  .friend-card {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .friend-info {
+    text-align: center;
+  }
+}

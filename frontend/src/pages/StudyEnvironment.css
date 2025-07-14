@@ -1,0 +1,29 @@
+/* StudyEnvironment.css */
+
+.study-environment-container {
+  background-color: #f9fbfd;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  font-family: 'Segoe UI', sans-serif;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.study-environment-container h2 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #34495e;
+}
+
+@media (max-width: 768px) {
+  .study-environment-container {
+    padding: 18px;
+  }
+
+  .study-environment-container h2 {
+    font-size: 18px;
+    text-align: center;
+  }
+}

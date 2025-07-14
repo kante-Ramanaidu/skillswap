@@ -1,0 +1,180 @@
+/* === Background Setup === */
+.auth-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: url('../assets/images/skill.jpg') no-repeat center center/cover;
+  overflow: hidden;
+  position: relative;
+}
+
+/* === Animation overlay (optional shimmer effect) === */
+.auth-page::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  z-index: 1;
+}
+
+/* === Auth Card Styling === */
+.auth-card {
+  position: relative;
+  z-index: 2;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 2rem;
+  border-radius: 12px;
+  width: 400px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  animation: slideUp 0.5s ease;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* === Scrollbar for form inside card === */
+.auth-card::-webkit-scrollbar {
+  width: 6px;
+}
+.auth-card::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
+}
+
+/* === Title === */
+.auth-title {
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+  text-align: center;
+  color: #333;
+}
+
+/* === Input Fields === */
+.auth-label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 0.3rem;
+  color: #444;
+}
+
+.auth-input {
+  width: 100%;
+  padding: 0.6rem;
+  margin-bottom: 1rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+}
+
+.auth-input:focus {
+  outline: none;
+  border-color: #007bff;
+}
+
+/* === Skill Section === */
+.skill-section {
+  margin-bottom: 1rem;
+}
+
+.skill-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.5rem;
+}
+
+.chip {
+  background-color: #e0e0e0;
+  border-radius: 20px;
+  padding: 6px 12px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.chip.selected {
+  background-color: #007bff;
+  color: white;
+}
+
+.custom-skill-input {
+  width: 100%;
+  padding: 0.5rem;
+  margin-top: 0.5rem;
+  font-size: 0.95rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+/* === Button === */
+.auth-button {
+  width: 100%;
+  padding: 0.75rem;
+  margin-top: 1rem;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.auth-button:hover {
+  background-color: #0056b3;
+}
+
+/* === Messages === */
+.error-message {
+  color: #d32f2f;
+  font-size: 0.9rem;
+  margin-top: -0.5rem;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.success-message {
+  color: #388e3c;
+  font-size: 0.9rem;
+  margin-top: -0.5rem;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+/* === Mobile Responsiveness === */
+@media (max-width: 480px) {
+  .auth-card {
+    width: 90%;
+    padding: 1.2rem;
+  }
+
+  .auth-title {
+    font-size: 1.5rem;
+  }
+
+  .chip {
+    font-size: 0.8rem;
+    padding: 5px 10px;
+  }
+
+  .auth-input,
+  .custom-skill-input {
+    font-size: 0.9rem;
+  }
+
+  .auth-button {
+    font-size: 0.95rem;
+  }
+}

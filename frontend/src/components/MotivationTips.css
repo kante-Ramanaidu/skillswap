@@ -1,0 +1,59 @@
+/* ✅ components/MotivationTips.css */
+
+.motivation-box {
+  background-color: #ffffff;
+  padding: 20px 28px;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  margin-top: 24px;
+  text-align: center;
+}
+
+.motivation-heading {
+  font-size: 1.4rem;
+  margin-bottom: 16px;
+  color: #4b6cb7;
+}
+
+.motivation-quote-list {
+  list-style: none;
+  padding: 0;
+  margin-bottom: 16px;
+}
+
+.motivation-quote {
+  font-style: italic;
+  font-size: 1rem;
+  margin: 8px 0;
+  color: #333;
+}
+
+.next-quote-btn {
+  background-color: #4b6cb7;
+  color: white;
+  border: none;
+  padding: 10px 24px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.next-quote-btn:hover {
+  background-color: #3a56a1;
+}
+
+@media (max-width: 768px) {
+  .motivation-box {
+    padding: 18px;
+  }
+
+  .motivation-quote {
+    font-size: 0.95rem;
+  }
+
+  .next-quote-btn {
+    width: 100%;
+  }
+}

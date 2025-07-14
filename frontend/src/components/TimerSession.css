@@ -1,0 +1,99 @@
+/* TimerSession.css */
+
+.timer-session {
+  background: #ffffff;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  font-family: 'Segoe UI', sans-serif;
+  text-align: center;
+}
+
+.timer-title {
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: #4b6cb7;
+  margin-bottom: 4px;
+}
+
+.timer-subject {
+  font-size: 1.1rem;
+  color: #555;
+  margin-bottom: 8px;
+}
+
+.timer-count {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #2c3e50;
+  background: #f0f4fa;
+  padding: 10px 20px;
+  border-radius: 8px;
+  display: inline-block;
+  margin: 0 auto;
+}
+
+.button-group {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+.end-button {
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.end-button:hover {
+  background-color: #c0392b;
+}
+
+.whatsapp-button {
+  background-color: #25D366;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.3s ease;
+}
+
+.whatsapp-button:hover {
+  background-color: #1ea94d;
+}
+
+/* 📱 Mobile Responsive */
+@media (max-width: 768px) {
+  .timer-title {
+    font-size: 1.3rem;
+  }
+
+  .timer-count {
+    font-size: 2rem;
+  }
+
+  .button-group {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .end-button,
+  .whatsapp-button {
+    width: 100%;
+    text-align: center;
+  }
+}

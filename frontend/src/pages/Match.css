@@ -1,0 +1,126 @@
+.matches-container {
+  padding: 2rem;
+  background-color: #f7f9fc;
+  min-height: 100vh;
+  text-align: center;
+}
+
+.matches-title {
+  font-size: 2.4rem;
+  font-weight: 700;
+  color: #9794c7;
+  margin-bottom: 0.5rem;
+}
+
+.match-subtitle {
+  color: #555;
+  margin-bottom: 2rem;
+  font-size: 1.1rem;
+}
+
+.match-cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  justify-content: center;
+}
+
+.match-card {
+  background-color: #fff;
+  border-radius: 16px;
+  padding: 1.5rem;
+  width: 300px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease;
+}
+
+.match-card:hover {
+  transform: translateY(-5px);
+}
+
+.profile-circle {
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(to right, #4f46e5, #6d28d9);
+  color: white;
+  font-weight: bold;
+  border-radius: 50%;
+  line-height: 50px;
+  font-size: 1.3rem;
+  margin: 0 auto 0.5rem;
+}
+
+.match-name {
+  font-size: 1.25rem;
+  font-weight: bold;
+  margin-bottom: 0.8rem;
+  color: #111827;
+}
+
+.match-section {
+  text-align: left;
+  margin-top: 0.5rem;
+}
+
+.badge-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.3rem;
+}
+
+.badge {
+  background: #e0e7ff;
+  color: #3730a3;
+  padding: 0.3rem 0.7rem;
+  border-radius: 12px;
+  font-size: 0.85rem;
+}
+
+.badge-learn {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.chat-button {
+  margin-top: 1rem;
+  padding: 0.6rem 1.1rem;
+  background: linear-gradient(to right, #4f46e5, #22c55e);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.3s ease;
+}
+
+.chat-button:hover {
+  background: linear-gradient(to right, #4338ca, #16a34a);
+}
+
+.friend-status {
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.friend-status.success {
+  color: #16a34a;
+}
+
+.friend-status.pending {
+  color: #ca8a04;
+}
+.no-matches {
+  text-align: center;
+  color: #777;
+  font-size: 1.1rem;
+  margin-top: 2rem;
+}
+
+
+/* Responsive */
+@media (max-width: 768px) {
+  .match-card {
+    width: 90%;
+  }
+}
