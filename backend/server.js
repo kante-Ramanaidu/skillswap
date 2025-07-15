@@ -10,9 +10,9 @@ import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
 
 dotenv.config();
 
@@ -21,7 +21,7 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: 'http://localhost:5173', // your frontend dev URL
+    origin: 'http://localhost:5173', // you can change this to your deployed frontend later
     methods: ['GET', 'POST'],
   },
 });
@@ -30,34 +30,15 @@ app.use(cors());
 app.use(express.json());
 
 const { Pool } = pkg;
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 
-/* ✅ PostgreSQL TABLES required:
+// ✅ ENABLE SSL FOR RENDER POSTGRES
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false,
+  },
+});
 
-CREATE TABLE IF NOT EXISTS users (
-  id SERIAL PRIMARY KEY,
-  name TEXT NOT NULL,
-  email TEXT UNIQUE NOT NULL,
-  password TEXT NOT NULL,
-  skills_to_teach TEXT[],
-  skills_to_learn TEXT[],
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE IF NOT EXISTS matches (
-  user1_id INTEGER REFERENCES users(id),
-  user2_id INTEGER REFERENCES users(id),
-  PRIMARY KEY (user1_id, user2_id)
-);
-
-CREATE TABLE IF NOT EXISTS messages (
-  id SERIAL PRIMARY KEY,
-  room_id TEXT NOT NULL,
-  sender_id INTEGER,
-  content TEXT NOT NULL,
-  timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-*/
 
 // ✅ Updated Signup route with phone support
 app.post('/api/auth/signup', async (req, res) => {

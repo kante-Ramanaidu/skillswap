@@ -25,7 +25,8 @@ function Login() {
     }
 
     try {
-      const res = await axios.post('http://localhost:5000/api/auth/login', form);
+      const baseURL = import.meta.env.VITE_API_BASE_URL;
+      const res = await axios.post(`${baseURL}/api/auth/login`, form);
       localStorage.setItem('token', res.data.token);
       localStorage.setItem('userId', res.data.user.id);
       setSuccess('✅ Login successful! Redirecting...');
