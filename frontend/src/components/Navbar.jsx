@@ -61,10 +61,10 @@ function Navbar() {
               <li onClick={() => handleNavigate('/profile')}>👤 Profile</li>
             </>
           )}
-          <li onClick={() => handleNavigate('/friend-requests')}>👥 Friend Requests</li>
-          <li onClick={() => handleNavigate('/friends')}>✅ Friends</li>
-          <li onClick={() => handleNavigate('/history')}>📖 History</li>
-          <li onClick={handleLogout}>🚪 Logout</li>
+          <li onClick={() => handleNavigate('/friend-requests')}>👥Friend Requests</li>
+          <li onClick={() => handleNavigate('/friends')}>✅Friends</li>
+          <li onClick={() => handleNavigate('/history')}>📖History</li>
+          <li onClick={handleLogout}>🚪Logout</li>
         </ul>
       )}
     </nav>
