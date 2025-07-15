@@ -5,7 +5,7 @@ SkillSwap is a full-stack web application that connects users based on their lea
 ## 🌐 Live Demo
 
 🔗 [Try SkillSwap Now](https://skillswap-frontend-iuwr.onrender.com) 
-*(Replace with your actual Render/Vercel/Netlify link)*
+
 
 ---
 
