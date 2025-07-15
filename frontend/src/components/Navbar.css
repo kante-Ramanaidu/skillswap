@@ -1,104 +1,115 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
-
-* {
-  box-sizing: border-box;
-}
-
-body {
-  font-family: 'Poppins', sans-serif;
-}
-
+/* Navbar Container */
 .navbar {
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  background-color: #1f2937;
-  color: white;
-  padding: 12px 20px;
-  height: 60px;
+  align-items: center;
+  background-color: #1f2937; /* Dark navy */
+  padding: 0.75rem 1.25rem;
+  color: #ffffff;
   position: relative;
-  z-index: 10;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  font-family: 'Segoe UI', sans-serif;
 }
 
-/* Left section */
+/* Left section (hamburger + logo) */
 .navbar-left {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
 }
 
 .hamburger {
-  font-size: 24px;
-  cursor: pointer;
-  user-select: none;
-  color: white;
-}
-
-/* SkillSwap logo */
-.navbar-logo {
   font-size: 1.4rem;
-  font-weight: bold;
   cursor: pointer;
-  color: inherit;
+  color: white;
+  display: flex;
+  align-items: center;
 }
 
-/* Always-visible desktop links */
+.navbar-logo {
+  font-weight: bold;
+  font-size: 1.3rem;
+  cursor: pointer;
+  color: #fff;
+  display: flex;
+  align-items: center;
+}
+
+/* Main nav links */
 .navbar-main-links {
   display: flex;
-  gap: 20px;
   list-style: none;
+  gap: 2rem;
+  margin: 0;
+  padding: 0;
 }
 
 .navbar-main-links li {
   cursor: pointer;
-  padding: 8px 14px;
-  border-radius: 6px;
-  transition: background-color 0.2s ease;
+  font-weight: 500;
+  color: white;
+  transition: color 0.2s ease;
 }
 
 .navbar-main-links li:hover {
-  background-color: #374151;
+  color: #a0d2ff;
 }
 
-/* Dropdown menu (for hamburger) */
+/* Dropdown styles */
 .navbar-dropdown {
   position: absolute;
   top: 60px;
-  left: 12px;
+  left: 10px;
   background-color: #111827;
-  border-radius: 8px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-  list-style: none;
-  padding: 10px 0;
-  width: 200px;
-  animation: fadeIn 0.3s ease;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 220px;
+  z-index: 1001;
 }
 
-.navbar-dropdown li {
-  padding: 12px 20px;
+.navbar-dropdown li,
+.navbar-dropdown button {
+  font-size: 0.95rem;
+  color: white;
+  background: none;
+  border: none;
+  text-align: left;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  font-weight: 500;
+  padding: 6px 10px;
+  border-radius: 6px;
+  transition: background 0.2s ease;
 }
 
-.navbar-dropdown li:hover {
-  background-color: #374151;
+.navbar-dropdown li:hover,
+.navbar-dropdown button:hover {
+  background-color: #1f2937;
 }
 
-/* Responsive behavior */
-@media screen and (max-width: 768px) {
+/* Responsive */
+@media (max-width: 768px) {
   .navbar-main-links {
     display: none;
   }
-}
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-6px);
+  .navbar-main-links.mobile-only {
+    display: flex;
+    gap: 1rem;
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+
+  .navbar {
+    flex-wrap: wrap;
+  }
+
+  .navbar-logo {
+    font-size: 1.1rem;
+  }
+
+  .hamburger {
+    font-size: 1.6rem;
   }
 }
