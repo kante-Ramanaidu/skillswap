@@ -1,8 +1,9 @@
-// src/pages/Match.jsx
 import './Match.css';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+
+const baseURL = import.meta.env.VITE_API_BASE_URL;
 
 function Match() {
   const [matches, setMatches] = useState([]);
@@ -16,13 +17,13 @@ function Match() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await axios.post('http://localhost:5000/api/match', { userId });
+        const res = await axios.post(`${baseURL}/api/match`, { userId });
         setMatches(res.data.matchedUsers);
 
-        const friendsRes = await axios.get(`http://localhost:5000/api/friends/${userId}`);
+        const friendsRes = await axios.get(`${baseURL}/api/friends/${userId}`);
         setFriends(friendsRes.data.map(f => f.id));
 
-        const pendingRes = await axios.get(`http://localhost:5000/api/sent-friend-requests/${userId}`);
+        const pendingRes = await axios.get(`${baseURL}/api/sent-friend-requests/${userId}`);
         setPendingRequests(pendingRes.data.map(req => req.receiver_id));
       } catch (err) {
         console.error('Error fetching data:', err);
@@ -35,7 +36,7 @@ function Match() {
 
   const sendFriendRequest = async (receiverId) => {
     try {
-      const res = await axios.post('http://localhost:5000/api/friend-request', {
+      const res = await axios.post(`${baseURL}/api/friend-request`, {
         senderId: userId,
         receiverId,
       });

@@ -43,7 +43,7 @@ function TimerSession({ session, onEnd }) {
   useEffect(() => {
     const fetchPhone = async () => {
       try {
-        const res = await axios.get(`http://localhost:5000/api/user/${partnerId}/phone`);
+        const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/user/${partnerId}/phone`);
         setPartnerPhone(res.data.phone);
       } catch (err) {
         console.error('Failed to fetch phone number:', err);
@@ -54,7 +54,7 @@ function TimerSession({ session, onEnd }) {
 
   const handleComplete = async () => {
     try {
-      await axios.post('http://localhost:5000/api/sessions', {
+      await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/sessions`, {
         userId,
         ...session,
         completedAt: new Date().toISOString(),
@@ -83,7 +83,7 @@ function TimerSession({ session, onEnd }) {
           const confirmEnd = window.confirm("Do you want to end the session?");
           if (confirmEnd) handleComplete();
         }}>
-           End Session Early
+          End Session Early
         </button>
 
         {partnerPhone && (
@@ -93,7 +93,7 @@ function TimerSession({ session, onEnd }) {
             rel="noopener noreferrer"
             className="whatsapp-button"
           >
-             Join on WhatsApp
+            Join on WhatsApp
           </a>
         )}
       </div>

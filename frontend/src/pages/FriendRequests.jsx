@@ -7,12 +7,13 @@ function FriendRequests() {
   const [requests, setRequests] = useState([]);
 
   useEffect(() => {
-    axios.get(`http://localhost:5000/api/friend-requests/${userId}`)
+    axios
+      .get(`${import.meta.env.VITE_API_BASE_URL}/api/friend-requests/${userId}`) // ✅ UPDATED
       .then(res => setRequests(res.data));
   }, [userId]);
 
   const acceptRequest = async (requestId) => {
-    await axios.post('http://localhost:5000/api/friend-request/accept', { requestId });
+    await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/friend-request/accept`, { requestId }); // ✅ UPDATED
     alert("Friend request accepted!");
     setRequests(requests.filter(r => r.id !== requestId));
   };

@@ -64,9 +64,9 @@ function Signup() {
     };
 
     try {
-      const res = await axios.post('http://localhost:5000/api/auth/signup', processedForm);
+      const res = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/auth/signup`, processedForm);
       localStorage.setItem('userId', res.data.user.id);
-      setSuccessMessage('Signup successful! Redirecting...');
+      setSuccessMessage('Signup successful');
       setTimeout(() => {
         navigate('/dashboard');
       }, 1500);
@@ -85,56 +85,94 @@ function Signup() {
           <AuthFormInput label="Password" type="password" name="password" value={form.password} onChange={handleChange} />
           <AuthFormInput label="Phone Number" type="text" name="phone" value={form.phone} onChange={handleChange} />
 
+          {/* === Skills to Teach Section === */}
           <div className="skill-section">
             <label className="auth-label">Skills I Can Teach</label>
             <div className="skill-chips">
               {predefinedTeachSkills.map((skill, i) => (
                 <span
-                  key={i}
+                  key={`pre-${i}`}
                   className={`chip ${skillsToTeach.includes(skill) ? 'selected' : ''}`}
                   onClick={() => toggleSkill(skill, skillsToTeach, setSkillsToTeach)}
                 >
                   {skill} {skillsToTeach.includes(skill) && '✅'}
                 </span>
               ))}
+
+              {skillsToTeach
+                .filter(skill => !predefinedTeachSkills.includes(skill))
+                .map((skill, i) => (
+                  <span
+                    key={`custom-teach-${i}`}
+                    className="chip selected custom-chip"
+                    onClick={() => toggleSkill(skill, skillsToTeach, setSkillsToTeach)}
+                  >
+                    {skill} ✅
+                  </span>
+                ))}
             </div>
-            <input
-              type="text"
-              placeholder="Add custom skills (e.g., HTML,C++)"
-              value={customTeach}
-              onChange={(e) => setCustomTeach(e.target.value)}
-              onKeyDown={(e) =>
-                e.key === 'Enter' &&
-                handleAddSkill(customTeach, skillsToTeach, setSkillsToTeach, setCustomTeach)
-              }
-              className="custom-skill-input"
-            />
+
+            <div className="custom-skill-group">
+              <input
+                type="text"
+                placeholder="Add custom skills (e.g., HTML,C++)"
+                value={customTeach}
+                onChange={(e) => setCustomTeach(e.target.value)}
+                className="custom-skill-input"
+              />
+              <button
+                type="button"
+                className="add-button"
+                onClick={() => handleAddSkill(customTeach, skillsToTeach, setSkillsToTeach, setCustomTeach)}
+              >
+                ➕ Add
+              </button>
+            </div>
           </div>
 
+          {/* === Skills to Learn Section === */}
           <div className="skill-section">
             <label className="auth-label">Skills I Want to Learn</label>
             <div className="skill-chips">
               {predefinedLearnSkills.map((skill, i) => (
                 <span
-                  key={i}
+                  key={`pre-learn-${i}`}
                   className={`chip ${skillsToLearn.includes(skill) ? 'selected' : ''}`}
                   onClick={() => toggleSkill(skill, skillsToLearn, setSkillsToLearn)}
                 >
                   {skill} {skillsToLearn.includes(skill) && '✅'}
                 </span>
               ))}
+
+              {skillsToLearn
+                .filter(skill => !predefinedLearnSkills.includes(skill))
+                .map((skill, i) => (
+                  <span
+                    key={`custom-learn-${i}`}
+                    className="chip selected custom-chip"
+                    onClick={() => toggleSkill(skill, skillsToLearn, setSkillsToLearn)}
+                  >
+                    {skill} ✅
+                  </span>
+                ))}
             </div>
-            <input
-              type="text"
-              placeholder="Add custom skills (e.g., Flutter,MySQL)"
-              value={customLearn}
-              onChange={(e) => setCustomLearn(e.target.value)}
-              onKeyDown={(e) =>
-                e.key === 'Enter' &&
-                handleAddSkill(customLearn, skillsToLearn, setSkillsToLearn, setCustomLearn)
-              }
-              className="custom-skill-input"
-            />
+
+            <div className="custom-skill-group">
+              <input
+                type="text"
+                placeholder="Add custom skills (e.g., Flutter,MySQL)"
+                value={customLearn}
+                onChange={(e) => setCustomLearn(e.target.value)}
+                className="custom-skill-input"
+              />
+              <button
+                type="button"
+                className="add-button"
+                onClick={() => handleAddSkill(customLearn, skillsToLearn, setSkillsToLearn, setCustomLearn)}
+              >
+                ➕ Add
+              </button>
+            </div>
           </div>
 
           {error && <p className="error-message">{error}</p>}

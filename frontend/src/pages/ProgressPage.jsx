@@ -24,8 +24,8 @@ function ProgressPage() {
   });
 
   useEffect(() => {
-    axios.get(`http://localhost:5000/api/friends/${userId}`).then(res => setFriends(res.data));
-    axios.get(`http://localhost:5000/api/schedules/${userId}`).then(res => setSchedules(res.data));
+    axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/friends/${userId}`).then(res => setFriends(res.data));
+    axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/schedules/${userId}`).then(res => setSchedules(res.data));
   }, [userId]);
 
   const handleSubmit = async () => {
@@ -43,7 +43,7 @@ function ProgressPage() {
     const roomId = [teacherId, learnerId, Date.now()].join('_');
 
     try {
-      await axios.post('http://localhost:5000/api/schedules', {
+      await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/schedules`, {
         roomId,
         teacherId,
         learnerId,
@@ -62,7 +62,7 @@ function ProgressPage() {
         role: 'teacher'
       });
 
-      const res = await axios.get(`http://localhost:5000/api/schedules/${userId}`);
+      const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/schedules/${userId}`);
       setSchedules(res.data);
       setShowForm(false);
     } catch (err) {
@@ -71,8 +71,8 @@ function ProgressPage() {
   };
 
   const markAsCompleted = async (sessionId) => {
-    await axios.post(`http://localhost:5000/api/mark-complete/${sessionId}`);
-    const res = await axios.get(`http://localhost:5000/api/schedules/${userId}`);
+    await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/mark-complete/${sessionId}`);
+    const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/schedules/${userId}`);
     setSchedules(res.data);
   };
 

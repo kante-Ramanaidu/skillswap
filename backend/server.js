@@ -21,7 +21,7 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: 'http://localhost:5173', // you can change this to your deployed frontend later
+    origin: 'https://skillswap-frontend-iuwr.onrender.com', // you can change this to your deployed frontend later
     methods: ['GET', 'POST'],
   },
 });
@@ -38,6 +38,8 @@ const pool = new Pool({
     rejectUnauthorized: false,
   },
 });
+
+
 
 
 // ✅ Updated Signup route with phone support
@@ -95,8 +97,9 @@ app.post('/api/match', async (req, res) => {
   const { userId } = req.body;
 
   try {
+    // Get the current user's skills
     const userRes = await pool.query(
-      'SELECT skills_to_learn, skills_to_teach FROM users WHERE id = $1',
+      'SELECT skills_to_teach, skills_to_learn FROM users WHERE id = $1',
       [userId]
     );
 
@@ -104,31 +107,29 @@ app.post('/api/match', async (req, res) => {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    const { skills_to_learn, skills_to_teach } = userRes.rows[0];
+    const user = userRes.rows[0];
+    const skillsToTeach = user.skills_to_teach;
+    const skillsToLearn = user.skills_to_learn;
 
-    const matchRes = await pool.query(
-      `SELECT id, name, phone, skills_to_teach, skills_to_learn FROM users
-       WHERE id != $1
-         AND $2::text[] && skills_to_teach
-         AND $3::text[] && skills_to_learn`,
-      [userId, skills_to_learn, skills_to_teach]
-    );
+    // Match logic: if EITHER condition is true
+    const matchQuery = `
+      SELECT id, name, phone, skills_to_teach, skills_to_learn
+      FROM users
+      WHERE id != $1
+        AND (
+          skills_to_teach && $2::text[]  -- they teach something I want to learn
+          OR
+          skills_to_learn && $3::text[]  -- they want to learn something I can teach
+        )
+    `;
 
-    const matchedUsers = matchRes.rows;
+    const matchRes = await pool.query(matchQuery, [userId, skillsToLearn, skillsToTeach]);
 
-    for (let match of matchedUsers) {
-      await pool.query(
-        `INSERT INTO matches (user1_id, user2_id)
-         VALUES ($1, $2)
-         ON CONFLICT DO NOTHING;`,
-        [userId, match.id]
-      );
-    }
+    res.json({ matchedUsers: matchRes.rows });
 
-    res.json({ matchedUsers });
   } catch (err) {
-    console.error('Match error:', err.message);
-    res.status(500).json({ message: 'Server error' });
+    console.error('Error matching users:', err);
+    res.status(500).json({ message: 'Internal server error' });
   }
 });
 

@@ -29,7 +29,7 @@ function Login() {
       const res = await axios.post(`${baseURL}/api/auth/login`, form);
       localStorage.setItem('token', res.data.token);
       localStorage.setItem('userId', res.data.user.id);
-      setSuccess('✅ Login successful! Redirecting...');
+      setSuccess('✅ Login successful');
       setTimeout(() => navigate('/dashboard'), 1500);
     } catch (err) {
       setError(err.response?.data?.message || 'Login failed.');

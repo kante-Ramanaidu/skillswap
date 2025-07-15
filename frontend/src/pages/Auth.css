@@ -153,6 +153,34 @@
   text-align: center;
 }
 
+.custom-skill-group {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.custom-chip {
+  background-color: #e3f2fd;
+  color: #1976d2;
+}
+
+.custom-skill-group {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.add-button {
+  background-color: #1976d2;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+
+
 /* === Mobile Responsiveness === */
 @media (max-width: 480px) {
   .auth-card {

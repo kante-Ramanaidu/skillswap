@@ -11,7 +11,8 @@ function FriendsPage() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    axios.get(`http://localhost:5000/api/friends/${userId}`)
+    axios
+      .get(`${import.meta.env.VITE_API_BASE_URL}/api/friends/${userId}`) // ✅ Updated URL
       .then(res => setFriends(res.data))
       .catch(err => console.error('Error fetching friends:', err));
   }, []);

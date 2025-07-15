@@ -10,8 +10,7 @@ function ProfilePage() {
 
   useEffect(() => {
     const fetchProfile = async () => {
-      const res = await axios.get(`http://localhost:5000/api/profile/${userId}`);
-
+      const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/profile/${userId}`);
       setProfile(res.data);
     };
     fetchProfile();
@@ -22,28 +21,27 @@ function ProfilePage() {
     setEditValue(value);
   };
 
- const handleSave = async () => {
-  try {
-    await axios.patch(`http://localhost:5000/profile/${userId}`, {
-      field: editField,
-      value: editValue,
-    });
+  const handleSave = async () => {
+    try {
+      await axios.patch(`${import.meta.env.VITE_API_BASE_URL}/profile/${userId}`, {
+        field: editField,
+        value: editValue,
+      });
 
-    setProfile({
-      ...profile,
-      [editField]: fieldIsSkill(editField)
-        ? editValue.split(',').map((s) => s.trim())
-        : editValue,
-    });
+      setProfile({
+        ...profile,
+        [editField]: fieldIsSkill(editField)
+          ? editValue.split(',').map((s) => s.trim())
+          : editValue,
+      });
 
-    setEditField(null);
-    setEditValue('');
-  } catch (err) {
-    console.error(err);
-    alert('Update failed');
-  }
-};
-
+      setEditField(null);
+      setEditValue('');
+    } catch (err) {
+      console.error(err);
+      alert('Update failed');
+    }
+  };
 
   const fieldIsSkill = (field) => field === 'skills_to_teach' || field === 'skills_to_learn';
 

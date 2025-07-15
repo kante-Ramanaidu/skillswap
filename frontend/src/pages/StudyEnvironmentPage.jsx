@@ -27,7 +27,7 @@ function StudyEnvironmentPage() {
 
   const fetchFiles = async () => {
     try {
-      const res = await axios.get(`http://localhost:5000/api/files/${roomId}`);
+      const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/files/${roomId}`);
       setUploadedFiles(res.data);
     } catch (err) {
       console.error('Error fetching files:', err);
@@ -48,7 +48,7 @@ function StudyEnvironmentPage() {
     formData.append('userId', senderId);
 
     try {
-      await axios.post('http://localhost:5000/api/upload', formData);
+      await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/upload`, formData);
       fetchFiles();
     } catch (err) {
       console.error('Upload failed:', err);
@@ -61,7 +61,7 @@ function StudyEnvironmentPage() {
     if (!confirmDelete) return;
 
     try {
-      await axios.delete(`http://localhost:5000/api/files/${fileId}`);
+      await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/files/${fileId}`);
       fetchFiles();
     } catch (err) {
       alert("Failed to delete file");

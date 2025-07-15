@@ -4,7 +4,7 @@ import { io } from 'socket.io-client';
 import axios from 'axios';
 import './Chat.css';
 
-const socket = io('http://localhost:5000');
+const socket = io(import.meta.env.VITE_API_BASE_URL);  // ✅ UPDATED
 
 function Chat() {
   const { roomId } = useParams();
@@ -25,7 +25,7 @@ function Chat() {
   useEffect(() => {
     const fetchMessages = async () => {
       try {
-        const res = await axios.get(`http://localhost:5000/api/chat/${roomId}`);
+        const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/chat/${roomId}`); // ✅ UPDATED
         const filtered = res.data.filter(msg => msg.content?.trim() !== '');
         setMessages(filtered);
       } catch (err) {

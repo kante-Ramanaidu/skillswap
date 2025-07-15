@@ -10,7 +10,7 @@ function HistoryPage() {
   useEffect(() => {
     const fetchHistory = async () => {
       try {
-        const res = await axios.get(`http://localhost:5000/api/sessions/${userId}`);
+        const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/sessions/${userId}`);
         setHistory(res.data);
       } catch (err) {
         console.error('Failed to fetch session history:', err);
