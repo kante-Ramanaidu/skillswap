@@ -21,7 +21,7 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: 'https://skillswap-frontend-iuwr.onrender.com', // you can change this to your deployed frontend later
+    origin: 'http://localhost:5173',
     methods: ['GET', 'POST'],
   },
 });
@@ -33,10 +33,11 @@ const { Pool } = pkg;
 
 // ✅ ENABLE SSL FOR RENDER POSTGRES
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: {
-    rejectUnauthorized: false,
-  },
+  user: 'postgres',
+  host: 'localhost',
+  database: 'skillswap',
+  password: 'ramkante84',
+  port: 5432,
 });
 
 
@@ -111,14 +112,14 @@ app.post('/api/match', async (req, res) => {
     const skillsToTeach = user.skills_to_teach;
     const skillsToLearn = user.skills_to_learn;
 
-    // Match logic: if EITHER condition is true
+    
     const matchQuery = `
       SELECT id, name, phone, skills_to_teach, skills_to_learn
       FROM users
       WHERE id != $1
         AND (
           skills_to_teach && $2::text[]  -- they teach something I want to learn
-          OR
+          AND
           skills_to_learn && $3::text[]  -- they want to learn something I can teach
         )
     `;
@@ -264,7 +265,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 // ✅ Serve uploaded files statically
-app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
+app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));   
 
 // ✅ Upload route (handles DB insert)
 app.post('/api/upload', upload.single('file'), async (req, res) => {
@@ -518,18 +519,22 @@ app.get('/api/sessions/:userId', async (req, res) => {
 
 
 
-
-// ✅ GET profile by userId
-// Example route in Express
+// ✅ GET profile
 app.get('/api/profile/:id', async (req, res) => {
   const { id } = req.params;
 
   try {
-    const result = await pool.query('SELECT * FROM users WHERE id = $1', [id]);
+    const result = await pool.query(
+      'SELECT * FROM users WHERE id = $1',
+      [id]
+    );
+
     if (result.rows.length === 0) {
       return res.status(404).json({ message: 'User not found' });
     }
+
     res.json(result.rows[0]);
+
   } catch (err) {
     console.error('Error fetching profile:', err);
     res.status(500).json({ error: 'Server error' });
@@ -537,14 +542,19 @@ app.get('/api/profile/:id', async (req, res) => {
 });
 
 
-
-// ✅ PATCH: update name / email / phone / skills individually
-app.patch('/profile/:userId', async (req, res) => {
+// ✅ PATCH profile (FIXED)
+app.patch('/api/profile/:userId', async (req, res) => {
   const { userId } = req.params;
   const { field, value } = req.body;
 
-  // Validate field names to avoid SQL injection
-  const allowedFields = ['name', 'email', 'phone', 'skills_to_teach', 'skills_to_learn'];
+  const allowedFields = [
+    'name',
+    'email',
+    'phone',
+    'skills_to_teach',
+    'skills_to_learn'
+  ];
+
   if (!allowedFields.includes(field)) {
     return res.status(400).json({ message: 'Invalid field name' });
   }
@@ -557,12 +567,18 @@ app.patch('/profile/:userId', async (req, res) => {
       RETURNING id, name, email, phone, skills_to_teach, skills_to_learn
     `;
 
-    const formattedValue = (field.includes('skills') && !Array.isArray(value))
-      ? [value] // if sending one skill only
-      : value;
+    const formattedValue =
+      (field.includes('skills') && !Array.isArray(value))
+        ? [value]
+        : value;
 
-    const result = await pool.query(updateQuery, [formattedValue, userId]);
+    const result = await pool.query(updateQuery, [
+      formattedValue,
+      userId
+    ]);
+
     res.json(result.rows[0]);
+
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Update failed' });
