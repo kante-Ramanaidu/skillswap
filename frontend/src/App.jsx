@@ -9,7 +9,7 @@ import Login from "./pages/Login";
 import PrivateLayout from "./components/PrivateLayout";
 import Dashboard from "./pages/Dashboard";
 import Match from "./pages/Match";
-import Chat from "./pages/Chat";
+import Chat from "./components/Chat";
 import StudyEnvironmentPage from "./pages/StudyEnvironmentPage";
 import FriendRequests from "./pages/FriendRequests";
 import FriendsPage from "./pages/FriendsPage";

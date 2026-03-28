@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AuthFormInput from '../components/AuthFormInput';
 import axios from 'axios';
-import './Auth.css';
+import '../styles/Auth.css';
 
 function Login() {
   const [form, setForm] = useState({ email: '', password: '' });
@@ -25,8 +25,7 @@ function Login() {
     }
 
     try {
-      const baseURL = import.meta.env.VITE_API_BASE_URL;
-      const res = await axios.post(`${baseURL}/api/auth/login`, form);
+    const res = await axios.post('http://localhost:5000/api/auth/login', form);
       localStorage.setItem('token', res.data.token);
       localStorage.setItem('userId', res.data.user.id);
       setSuccess('✅ Login successful');

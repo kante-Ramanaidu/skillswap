@@ -1,26 +1,30 @@
-// components/TimerSession.jsx
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
-import './TimerSession.css';
+import '../styles/TimerSession.css';
 
 function TimerSession({ session, onEnd }) {
   if (!session || !session.duration || !session.startTime) {
     return <p>⏳ Loading session...</p>;
   }
 
+  const intervalRef = useRef(null);
+
   const durationInSeconds = session.duration * 60;
+
   const [secondsLeft, setSecondsLeft] = useState(
     durationInSeconds - Math.floor((Date.now() - session.startTime) / 1000)
   );
+
   const [partnerPhone, setPartnerPhone] = useState('');
   const userId = localStorage.getItem('userId');
   const partnerId = localStorage.getItem('partnerId');
 
+  // ✅ Timer
   useEffect(() => {
-    const interval = setInterval(() => {
-      setSecondsLeft((prev) => {
+    intervalRef.current = setInterval(() => {
+      setSecondsLeft(prev => {
         if (prev <= 1) {
-          clearInterval(interval);
+          clearInterval(intervalRef.current);
           handleComplete();
           return 0;
         }
@@ -28,39 +32,50 @@ function TimerSession({ session, onEnd }) {
       });
     }, 1000);
 
-    return () => clearInterval(interval);
+    return () => clearInterval(intervalRef.current);
   }, []);
 
+  // ✅ Prevent Page Close
   useEffect(() => {
     const handleBeforeUnload = (e) => {
       e.preventDefault();
       e.returnValue = 'Are you sure you want to leave? Your session will end.';
     };
+
     window.addEventListener('beforeunload', handleBeforeUnload);
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
   }, []);
 
+  // ✅ Fetch Partner Phone
   useEffect(() => {
     const fetchPhone = async () => {
       try {
-        const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/user/${partnerId}/phone`);
+        const res = await axios.get(
+          `http://localhost:5000/api/user/${partnerId}/phone`
+        );
         setPartnerPhone(res.data.phone);
       } catch (err) {
         console.error('Failed to fetch phone number:', err);
       }
     };
-    fetchPhone();
+
+    if (partnerId) fetchPhone();
   }, [partnerId]);
 
+  // ✅ Stop Timer + Save Session
   const handleComplete = async () => {
     try {
-      await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/sessions`, {
+      clearInterval(intervalRef.current); // 🔥 STOP TIMER IMMEDIATELY
+
+      await axios.post(`http://localhost:5000/api/sessions`, {
         userId,
         ...session,
         completedAt: new Date().toISOString(),
       });
+
       sessionStorage.removeItem('activeSession');
       onEnd();
+
     } catch (err) {
       console.error('Failed to save session:', err);
     }
@@ -74,15 +89,25 @@ function TimerSession({ session, onEnd }) {
 
   return (
     <div className="timer-session">
-      <h2 className="timer-title">⏳ {session.type} - {session.subject}</h2>
+      <h2 className="timer-title">
+        ⏳ {session.type} - {session.subject}
+      </h2>
+
       <p className="timer-subject">{session.concept}</p>
+
       <div className="timer-count">{formatTime()}</div>
 
       <div className="button-group">
-        <button className="end-button" onClick={() => {
-          const confirmEnd = window.confirm("Do you want to end the session?");
-          if (confirmEnd) handleComplete();
-        }}>
+
+        <button
+          className="end-button"
+          onClick={() => {
+            const confirmEnd = window.confirm(
+              "Do you want to end the session?"
+            );
+            if (confirmEnd) handleComplete();
+          }}
+        >
           End Session Early
         </button>
 
@@ -96,6 +121,7 @@ function TimerSession({ session, onEnd }) {
             Join on WhatsApp
           </a>
         )}
+
       </div>
     </div>
   );

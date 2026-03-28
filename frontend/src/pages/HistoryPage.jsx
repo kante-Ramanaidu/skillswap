@@ -1,7 +1,7 @@
 // ✅ HistoryPage.jsx
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import './HistoryPage.css'; // optional styling
+import '../styles/HistoryPage.css'; // optional styling
 
 function HistoryPage() {
   const [history, setHistory] = useState([]);
@@ -10,7 +10,7 @@ function HistoryPage() {
   useEffect(() => {
     const fetchHistory = async () => {
       try {
-        const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/sessions/${userId}`);
+       const res = await axios.get(`http://localhost:5000/api/sessions/${userId}`);
         setHistory(res.data);
       } catch (err) {
         console.error('Failed to fetch session history:', err);

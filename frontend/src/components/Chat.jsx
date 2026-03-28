@@ -2,10 +2,10 @@ import { useEffect, useState, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { io } from 'socket.io-client';
 import axios from 'axios';
-import './Chat.css';
+import '../styles/Chat.css';
 
-const socket = io(import.meta.env.VITE_API_BASE_URL);  // ✅ UPDATED
-
+//const socket = io(import.meta.env.VITE_API_BASE_URL);  // ✅ UPDATED
+const socket = io('http://localhost:5000');
 function Chat() {
   const { roomId } = useParams();
   const senderId = localStorage.getItem('userId');
@@ -25,7 +25,7 @@ function Chat() {
   useEffect(() => {
     const fetchMessages = async () => {
       try {
-        const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/chat/${roomId}`); // ✅ UPDATED
+       const res = await axios.get(`http://localhost:5000/api/chat/${roomId}`); // ✅ UPDATED
         const filtered = res.data.filter(msg => msg.content?.trim() !== '');
         setMessages(filtered);
       } catch (err) {

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import AuthFormInput from '../components/AuthFormInput';
-import './Auth.css';
+import '../styles/Auth.css';
 
 function Signup() {
   const navigate = useNavigate();
@@ -64,7 +64,7 @@ function Signup() {
     };
 
     try {
-      const res = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/auth/signup`, processedForm);
+      const res = await axios.post('http://localhost:5000/api/auth/signup', processedForm);
       localStorage.setItem('userId', res.data.user.id);
       setSuccessMessage('Signup successful');
       setTimeout(() => {

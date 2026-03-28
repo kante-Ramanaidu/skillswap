@@ -1,19 +1,18 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import './FriendRequests.css'; // optional for styling
+import '../styles/FriendRequests.css'; // optional for styling
 
 function FriendRequests() {
   const userId = localStorage.getItem('userId');
   const [requests, setRequests] = useState([]);
 
   useEffect(() => {
-    axios
-      .get(`${import.meta.env.VITE_API_BASE_URL}/api/friend-requests/${userId}`) // ✅ UPDATED
+   axios.get(`http://localhost:5000/api/friend-requests/${userId}`)// ✅ UPDATED
       .then(res => setRequests(res.data));
   }, [userId]);
 
   const acceptRequest = async (requestId) => {
-    await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/friend-request/accept`, { requestId }); // ✅ UPDATED
+   axios.post(`http://localhost:5000/api/friend-request/accept`, { requestId }) // ✅ UPDATED
     alert("Friend request accepted!");
     setRequests(requests.filter(r => r.id !== requestId));
   };

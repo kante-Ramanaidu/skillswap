@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { openStudyRoom } from '../components/openStudyRoom';
-import './FriendsPage.css';
+import '../styles/FriendsPage.css';
 
 function FriendsPage() {
   const [friends, setFriends] = useState([]);
@@ -11,8 +11,7 @@ function FriendsPage() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    axios
-      .get(`${import.meta.env.VITE_API_BASE_URL}/api/friends/${userId}`) // ✅ Updated URL
+    axios.get(`http://localhost:5000/api/friends/${userId}`)// ✅ Updated URL
       .then(res => setFriends(res.data))
       .catch(err => console.error('Error fetching friends:', err));
   }, []);

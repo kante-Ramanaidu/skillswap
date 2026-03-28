@@ -1,6 +1,6 @@
 // components/SessionForm.jsx
 import { useState } from 'react';
-import './SessionForm.css';
+import '../styles/SessionForm.css';
 
 function SessionForm({ onStart }) {
   const [form, setForm] = useState({

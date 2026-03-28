@@ -1,6 +1,6 @@
 // ✅ components/MotivationTips.jsx
 import { useState } from 'react';
-import './MotivationTips.css';
+import '../styles/MotivationTips.css';
 
 const quotes = [
   "Push yourself, because no one else is going to do it for you.",
