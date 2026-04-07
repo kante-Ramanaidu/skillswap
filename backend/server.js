@@ -55,11 +55,11 @@ app.use('/api/schedules', schedulesRoutes);
 app.use('/api/profile',   profileRoutes);
 app.use('/api',           sessionsRoutes);
 
-// Serve React frontend (change 'dist' to 'build' if using Create React App)
-app.use(express.static(path.join(__dirname, '../client/dist')));
+// Serve React frontend
+app.use(express.static(path.join(__dirname, '../frontend/dist')));
 
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../client/dist', 'index.html'));
+app.get(/^(?!\/api).*$/, (req, res) => {
+  res.sendFile(path.join(__dirname, '../frontend/dist', 'index.html'));
 });
 
 const PORT = process.env.PORT || 5000;
