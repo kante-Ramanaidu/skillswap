@@ -1,109 +1,108 @@
 import { useEffect, useState, useRef } from 'react';
-import { useParams } from 'react-router-dom';
-import { io } from 'socket.io-client';
 import axios from 'axios';
 import '../styles/Chat.css';
 
-//const socket = io(import.meta.env.VITE_API_BASE_URL);  // ✅ UPDATED
-const socket = io('http://localhost:5000');
-function Chat() {
-  const { roomId } = useParams();
+const API_URL = 'https://your-backend.onrender.com';
+
+function Chat({ roomId, socket }) {
   const senderId = localStorage.getItem('userId');
-  const partnerPhone = localStorage.getItem('partnerPhone');
+  const token = localStorage.getItem('token');
+  const partnerName = localStorage.getItem('partnerName');
+
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState('');
+  const [connected, setConnected] = useState(socket?.connected || false);
   const chatEndRef = useRef(null);
 
-  // ✅ WhatsApp handler
-  const handleWhatsApp = () => {
-    if (!partnerPhone) return alert("Partner's phone number not available.");
-    const number = partnerPhone.startsWith('+') ? partnerPhone : `+91${partnerPhone}`;
-    window.open(`https://wa.me/${number}`, '_blank');
-  };
+  useEffect(() => {
+    if (!socket) return;
+    const onConnect = () => setConnected(true);
+    const onDisconnect = () => setConnected(false);
+    const onMessage = (msg) => {
+      if (msg.content?.trim()) setMessages(prev => [...prev, msg]);
+    };
+    socket.on('connect', onConnect);
+    socket.on('disconnect', onDisconnect);
+    socket.on('receiveMessage', onMessage);
+    setConnected(socket.connected);
+    return () => {
+      socket.off('connect', onConnect);
+      socket.off('disconnect', onDisconnect);
+      socket.off('receiveMessage', onMessage);
+    };
+  }, [socket]);
 
-  // ✅ Fetch chat history
   useEffect(() => {
     const fetchMessages = async () => {
       try {
-       const res = await axios.get(`http://localhost:5000/api/chat/${roomId}`); // ✅ UPDATED
-        const filtered = res.data.filter(msg => msg.content?.trim() !== '');
-        setMessages(filtered);
+        const res = await axios.get(`${API_URL}/api/chat/${roomId}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setMessages(res.data.filter(msg => msg.content?.trim()));
       } catch (err) {
         console.error('Failed to fetch messages:', err);
       }
     };
-
     if (roomId) fetchMessages();
   }, [roomId]);
 
-  // ✅ Join room and listen for real-time messages
-  useEffect(() => {
-    if (!roomId || !senderId) return;
-
-    socket.emit('joinRoom', roomId);
-
-    const handleReceiveMessage = (msg) => {
-      if (!msg.message?.trim()) return;
-      setMessages(prev => [...prev, msg]);
-    };
-
-    socket.on('receiveMessage', handleReceiveMessage);
-
-    return () => {
-      socket.off('receiveMessage', handleReceiveMessage);
-    };
-  }, [roomId, senderId]);
-
-  // ✅ Send message
   const handleSend = () => {
-    if (message.trim()) {
-      socket.emit('sendMessage', {
-        roomId,
-        senderId,
-        message: message.trim()
-      });
-      setMessage('');
-    }
+    if (!message.trim() || !socket?.connected) return;
+    socket.emit('sendMessage', { roomId, message: message.trim() });
+    setMessage('');
   };
 
-  // ✅ Auto scroll to latest message
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
+  const formatTime = (timestamp) => {
+    if (!timestamp) return '';
+    return new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  };
+
   return (
-    <div className="chat-container">
+    <div className="chat-root">
       <div className="chat-header">
-        <h2> Chat Room </h2>
-        {partnerPhone && (
-          <button className="whatsapp-button" onClick={handleWhatsApp}>
-            WhatsApp 📞
-          </button>
-        )}
+        <div className="chat-header-info">
+          <span className="chat-header-icon">💬</span>
+          <span className="chat-header-name">{partnerName || 'Partner'}</span>
+        </div>
+        <div className={`chat-conn-dot ${connected ? 'on' : 'off'}`} />
       </div>
 
-      <div className="chat-box">
-        {messages.map((msg, index) => (
-          <div
-            key={index}
-            className={`chat-message ${msg.senderId == senderId ? 'sent' : 'received'}`}
-          >
-            <strong>{msg.senderId == senderId ? 'You' : msg.sender_name || msg.senderName}:</strong>{' '}
-            {msg.message || msg.content}
+      <div className="chat-messages">
+        {messages.length === 0 && (
+          <div className="chat-empty">
+            <div style={{ fontSize: '2rem' }}>👋</div>
+            <p>Start the conversation!</p>
           </div>
-        ))}
+        )}
+        {messages.map((msg, idx) => {
+          const isMine = String(msg.sender_id) === String(senderId);
+          return (
+            <div key={idx} className={`chat-msg ${isMine ? 'mine' : 'theirs'}`}>
+              {!isMine && <div className="chat-msg-name">{msg.sender_name}</div>}
+              <div className="chat-msg-bubble">{msg.content}</div>
+              <div className="chat-msg-time">{formatTime(msg.timestamp)}</div>
+            </div>
+          );
+        })}
         <div ref={chatEndRef} />
       </div>
 
-      <div className="chat-input">
+      <div className="chat-input-bar">
         <input
+          className="chat-input"
           type="text"
           value={message}
-          placeholder="Type a message..."
+          placeholder="Type a message…"
           onChange={(e) => setMessage(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && handleSend()}
         />
-        <button onClick={handleSend}>Send</button>
+        <button className="chat-send-btn" onClick={handleSend} disabled={!message.trim()}>
+          ➤
+        </button>
       </div>
     </div>
   );

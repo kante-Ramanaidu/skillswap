@@ -1,29 +1,38 @@
-/* StudyEnvironment.css */
+.study-environment-container { padding: 12px 16px; }
 
-.study-environment-container {
-  background-color: #f9fbfd;
-  padding: 24px;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-  font-family: 'Segoe UI', sans-serif;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
+.skill-section { margin-bottom: 14px; }
 
-.study-environment-container h2 {
-  font-size: 20px;
+.skill-label {
+  font-size: 0.75rem;
   font-weight: 600;
-  color: #34495e;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 8px;
+}
+.skill-label.teaching { color: #38bdf8; }
+.skill-label.learning { color: #34d399; }
+
+.skill-list {
+  list-style: none;
+  padding: 0; margin: 0;
+  display: flex; flex-wrap: wrap; gap: 8px;
 }
 
-@media (max-width: 768px) {
-  .study-environment-container {
-    padding: 18px;
-  }
-
-  .study-environment-container h2 {
-    font-size: 18px;
-    text-align: center;
-  }
+.skill-tag {
+  font-size: 0.82rem;
+  font-weight: 500;
+  padding: 4px 12px;
+  border-radius: 100px;
 }
+.skill-tag.teach {
+  background: rgba(56,189,248,0.1);
+  color: #38bdf8;
+  border: 1px solid rgba(56,189,248,0.25);
+}
+.skill-tag.learn {
+  background: rgba(52,211,153,0.1);
+  color: #34d399;
+  border: 1px solid rgba(52,211,153,0.25);
+}
+
+.no-skills { font-size: 0.85rem; color: #64748b; padding: 8px 0; }

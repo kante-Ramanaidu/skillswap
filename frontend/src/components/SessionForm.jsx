@@ -13,22 +13,24 @@ function SessionForm({ onStart }) {
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
-const handleStart = () => {
-  if (form.subject && form.concept && form.duration > 0) {
-    const sessionWithTime = {
-      ...form,
-      startTime: Date.now(), // in milliseconds
-    };
-    onStart(sessionWithTime);
-    sessionStorage.setItem('activeSession', JSON.stringify(sessionWithTime));
-  } else {
-    alert('Please fill all fields.');
-  }
-};
+
+  const handleStart = () => {
+    if (form.subject && form.concept && form.duration > 0) {
+      const sessionWithTime = {
+        ...form,
+        duration: Number(form.duration),
+        startTime: Date.now(),
+      };
+      sessionStorage.setItem('activeSession', JSON.stringify(sessionWithTime));
+      onStart(sessionWithTime);
+    } else {
+      alert('Please fill all fields.');
+    }
+  };
 
   return (
     <div className="session-form">
-      <h2 className="form-title"> Start New Session</h2>
+      <h2 className="form-title">Start New Session</h2>
 
       <div className="form-group">
         <label>Mode</label>
@@ -40,12 +42,22 @@ const handleStart = () => {
 
       <div className="form-group">
         <label>Subject</label>
-        <input name="subject" value={form.subject} onChange={handleChange} />
+        <input
+          name="subject"
+          placeholder="e.g. Mathematics"
+          value={form.subject}
+          onChange={handleChange}
+        />
       </div>
 
       <div className="form-group">
         <label>Concept</label>
-        <input name="concept" value={form.concept} onChange={handleChange} />
+        <input
+          name="concept"
+          placeholder="e.g. Derivatives"
+          value={form.concept}
+          onChange={handleChange}
+        />
       </div>
 
       <div className="form-group">
@@ -53,6 +65,7 @@ const handleStart = () => {
         <input
           type="number"
           name="duration"
+          min="1"
           value={form.duration}
           onChange={handleChange}
         />

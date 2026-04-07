@@ -2,24 +2,59 @@ import { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import '../styles/TimerSession.css';
 
-function TimerSession({ session, onEnd }) {
-  if (!session || !session.duration || !session.startTime) {
-    return <p>⏳ Loading session...</p>;
-  }
+const API_URL = 'https://your-backend.onrender.com';
 
+function TimerSession({ session, onEnd }) {
   const intervalRef = useRef(null);
+  const isEnding = useRef(false);
+
+  const token = localStorage.getItem('token');
+  const partnerId = localStorage.getItem('partnerId');
 
   const durationInSeconds = session.duration * 60;
 
   const [secondsLeft, setSecondsLeft] = useState(
-    durationInSeconds - Math.floor((Date.now() - session.startTime) / 1000)
+    Math.max(0, durationInSeconds - Math.floor((Date.now() - session.startTime) / 1000))
   );
-
   const [partnerPhone, setPartnerPhone] = useState('');
-  const userId = localStorage.getItem('userId');
-  const partnerId = localStorage.getItem('partnerId');
+  const [saving, setSaving] = useState(false);
 
-  // ✅ Timer
+  if (!session || !session.duration || !session.startTime) {
+    return <p>Loading session...</p>;
+  }
+
+  const handleComplete = async () => {
+    if (isEnding.current) return;
+    isEnding.current = true;
+
+    clearInterval(intervalRef.current);
+    setSaving(true);
+
+    try {
+      await axios.post(
+        `${API_URL}/api/sessions`,
+        {
+          type: session.type,
+          subject: session.subject,
+          concept: session.concept,
+          duration: session.duration,
+          startTime: session.startTime,
+          completedAt: new Date().toISOString(),
+        },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      sessionStorage.removeItem('activeSession');
+      onEnd();
+
+    } catch (err) {
+      console.error('Failed to save session:', err);
+      alert('Failed to save session. Please try again.');
+      isEnding.current = false;
+      setSaving(false);
+    }
+  };
+
   useEffect(() => {
     intervalRef.current = setInterval(() => {
       setSecondsLeft(prev => {
@@ -35,51 +70,29 @@ function TimerSession({ session, onEnd }) {
     return () => clearInterval(intervalRef.current);
   }, []);
 
-  // ✅ Prevent Page Close
   useEffect(() => {
     const handleBeforeUnload = (e) => {
       e.preventDefault();
-      e.returnValue = 'Are you sure you want to leave? Your session will end.';
+      e.returnValue = 'Session will end if you leave!';
     };
-
     window.addEventListener('beforeunload', handleBeforeUnload);
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
   }, []);
 
-  // ✅ Fetch Partner Phone
   useEffect(() => {
     const fetchPhone = async () => {
       try {
         const res = await axios.get(
-          `http://localhost:5000/api/user/${partnerId}/phone`
+          `${API_URL}/api/user/${partnerId}/phone`,
+          { headers: { Authorization: `Bearer ${token}` } }
         );
         setPartnerPhone(res.data.phone);
       } catch (err) {
-        console.error('Failed to fetch phone number:', err);
+        console.error('Failed to fetch phone:', err);
       }
     };
-
-    if (partnerId) fetchPhone();
-  }, [partnerId]);
-
-  // ✅ Stop Timer + Save Session
-  const handleComplete = async () => {
-    try {
-      clearInterval(intervalRef.current); // 🔥 STOP TIMER IMMEDIATELY
-
-      await axios.post(`http://localhost:5000/api/sessions`, {
-        userId,
-        ...session,
-        completedAt: new Date().toISOString(),
-      });
-
-      sessionStorage.removeItem('activeSession');
-      onEnd();
-
-    } catch (err) {
-      console.error('Failed to save session:', err);
-    }
-  };
+    if (partnerId && token) fetchPhone();
+  }, [partnerId, token]);
 
   const formatTime = () => {
     const mins = Math.floor(secondsLeft / 60);
@@ -90,38 +103,31 @@ function TimerSession({ session, onEnd }) {
   return (
     <div className="timer-session">
       <h2 className="timer-title">
-        ⏳ {session.type} - {session.subject}
+        {session.type} - {session.subject}
       </h2>
 
       <p className="timer-subject">{session.concept}</p>
 
       <div className="timer-count">{formatTime()}</div>
 
-      <div className="button-group">
+      {saving && (
+        <p style={{ textAlign: 'center', color: '#94a3b8', fontSize: '0.85rem' }}>
+          Saving session...
+        </p>
+      )}
 
+      <div className="button-group">
         <button
           className="end-button"
+          disabled={saving}
           onClick={() => {
-            const confirmEnd = window.confirm(
-              "Do you want to end the session?"
-            );
-            if (confirmEnd) handleComplete();
+            if (window.confirm('End session and save to history?')) {
+              handleComplete();
+            }
           }}
         >
-          End Session Early
+          {saving ? 'Saving...' : 'End Session'}
         </button>
-
-        {partnerPhone && (
-          <a
-            href={`https://wa.me/91${partnerPhone}?text=Let's start our SkillSwap session!`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="whatsapp-button"
-          >
-            Join on WhatsApp
-          </a>
-        )}
-
       </div>
     </div>
   );

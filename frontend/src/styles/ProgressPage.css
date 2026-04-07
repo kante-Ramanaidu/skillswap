@@ -21,6 +21,10 @@
   margin-bottom: 2rem;
   text-align: center;
 }
+.session-card button + button {
+  margin-left: 0.5rem; /* horizontal space between buttons */
+}
+
 
 .progress-actions {
   text-align: center;

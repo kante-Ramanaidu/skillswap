@@ -1,28 +1,35 @@
-// ✅ HistoryPage.jsx
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import '../styles/HistoryPage.css'; // optional styling
+import '../styles/HistoryPage.css';
+
+const API_URL = 'https://your-backend.onrender.com';
 
 function HistoryPage() {
   const [history, setHistory] = useState([]);
-  const userId = localStorage.getItem('userId');
+  const [error, setError] = useState('');
+
+  const token = localStorage.getItem('token');
 
   useEffect(() => {
     const fetchHistory = async () => {
       try {
-       const res = await axios.get(`http://localhost:5000/api/sessions/${userId}`);
+        const res = await axios.get(`${API_URL}/api/sessions`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
         setHistory(res.data);
       } catch (err) {
         console.error('Failed to fetch session history:', err);
+        setError('❌ Failed to load history');
       }
     };
-
-    fetchHistory();
-  }, [userId]);
+    if (token) fetchHistory();
+  }, [token]);
 
   return (
     <div className="history-page">
       <h2>🕒 Study Session History</h2>
+
+      {error && <p className="error-message">{error}</p>}
 
       {history.length === 0 ? (
         <p>No sessions completed yet.</p>

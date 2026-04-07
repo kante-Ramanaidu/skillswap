@@ -8,7 +8,7 @@ function Dashboard() {
   return (
     <div className="dashboard-container">
       <header className="dashboard-banner">
-        <h1>👋 Welcome to SkillSwap</h1>
+        <h1>Welcome to SkillSwap</h1>
         <p>Empowering peer-to-peer learning through shared knowledge.</p>
       </header>
 

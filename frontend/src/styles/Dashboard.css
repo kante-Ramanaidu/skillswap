@@ -1,25 +1,42 @@
-/* Dashboard.css */
-
+/* === Dashboard Container === */
 .dashboard-container {
-  padding: 2rem;
+  padding: 2rem 6%;
   font-family: 'Poppins', sans-serif;
-  background-color: #f9fafb;
+  background: #f8fafc;
   min-height: 100vh;
 }
 
+/* === Banner (Hero inside dashboard) === */
 .dashboard-banner {
-  background: linear-gradient(135deg, #1f2937, #111827);
+  position: relative;
+  background: linear-gradient(135deg, #0f172a, #1e293b);
   color: white;
-  padding: 2rem;
-  border-radius: 1rem;
+  padding: 2.5rem 2rem;
+  border-radius: 1.2rem;
   margin-bottom: 2rem;
   text-align: center;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
 }
 
+/* subtle glow */
+.dashboard-banner::after {
+  content: '';
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(56,189,248,0.25), transparent);
+  top: -50px;
+  right: -50px;
+  filter: blur(60px);
+}
+
+/* Banner text */
 .dashboard-banner h1 {
-  font-size: 2rem;
+  font-size: 2.2rem;
   margin-bottom: 0.5rem;
+  font-weight: 600;
 }
 
 .dashboard-banner p {
@@ -27,54 +44,86 @@
   opacity: 0.85;
 }
 
+/* === Cards Layout (Grid instead of flex) === */
 .dashboard-cards {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 1.5rem;
-  justify-content: center;
 }
 
+/* === Card === */
 .card {
-  background-color: white;
-  border-radius: 1rem;
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.05);
-  flex: 1 1 300px;
-  max-width: 340px;
+  background: #ffffff;
+  border-radius: 1.2rem;
   padding: 2rem;
-  text-align: center;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  text-align: left;
+
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
+
+  transition: all 0.3s ease;
   cursor: pointer;
+  position: relative;
+  overflow: hidden;
 }
 
+/* gradient hover glow */
+.card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, transparent, rgba(99,102,241,0.1), transparent);
+  opacity: 0;
+  transition: 0.4s;
+}
+
+.card:hover::before {
+  opacity: 1;
+}
+
+/* hover effect */
 .card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.1);
+  transform: translateY(-10px) scale(1.02);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
 }
 
+/* Title */
 .card h2 {
-  margin-bottom: 0.75rem;
-  color: #1f2937;
-  font-size: 1.25rem;
+  margin-bottom: 0.6rem;
+  color: #0f172a;
+  font-size: 1.3rem;
+  font-weight: 600;
 }
 
+/* Description */
 .card p {
-  color: #4b5563;
+  color: #475569;
   font-size: 0.95rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.2rem;
 }
 
-/* Responsive */
+/* optional CTA inside card */
+.card .card-action {
+  font-size: 0.85rem;
+  color: #6366f1;
+  font-weight: 500;
+}
+
+/* === Responsive === */
 @media (max-width: 768px) {
-  .dashboard-banner h1 {
-    font-size: 1.5rem;
+  .dashboard-container {
+    padding: 1.5rem 1rem;
   }
 
-  .dashboard-cards {
-    flex-direction: column;
-    align-items: center;
+  .dashboard-banner h1 {
+    font-size: 1.6rem;
+  }
+
+  .dashboard-banner p {
+    font-size: 0.9rem;
   }
 
   .card {
-    width: 90%;
+    padding: 1.5rem;
   }
 }

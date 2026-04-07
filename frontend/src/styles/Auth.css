@@ -1,39 +1,43 @@
-/* === Background Setup === */
+/* === Background === */
 .auth-page {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  min-height: 100vh;
   background: url('../assets/images/skill.jpg') no-repeat center center/cover;
-  overflow: hidden;
   position: relative;
 }
 
-/* === Animation overlay (optional shimmer effect) === */
+/* Overlay */
 .auth-page::before {
   content: '';
   position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(4px);
+  inset: 0;
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(6px);
   z-index: 1;
 }
 
-/* === Auth Card Styling === */
+/* === Card (Glass UI) === */
 .auth-card {
   position: relative;
   z-index: 2;
-  background: rgba(255, 255, 255, 0.95);
-  padding: 2rem;
-  border-radius: 12px;
-  width: 400px;
-  max-height: 90vh;
+  width: 420px;
+  max-height: 92vh;
   overflow-y: auto;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-  animation: slideUp 0.5s ease;
+  padding: 2rem;
+  border-radius: 16px;
+
+  background: rgba(255, 255, 255, 0.15); /* 🔥 more visible */
+  backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+  animation: fadeUp 0.5s ease;
 }
 
-@keyframes slideUp {
+/* Animation */
+@keyframes fadeUp {
   from {
     opacity: 0;
     transform: translateY(40px);
@@ -44,144 +48,172 @@
   }
 }
 
-/* === Scrollbar for form inside card === */
+/* Scrollbar */
 .auth-card::-webkit-scrollbar {
   width: 6px;
 }
 .auth-card::-webkit-scrollbar-thumb {
-  background-color: rgba(0, 0, 0, 0.2);
-  border-radius: 3px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
 }
 
 /* === Title === */
 .auth-title {
-  font-size: 1.8rem;
-  margin-bottom: 1rem;
+  font-size: 2rem;
   text-align: center;
-  color: #333;
+  color: #fff;
+  margin-bottom: 1.5rem;
+  font-weight: 600;
 }
 
-/* === Input Fields === */
+/* === Labels === */
 .auth-label {
+  color: #f1f5f9; /* 🔥 brighter */
+  font-size: 0.9rem;
+  margin-bottom: 5px;
   display: block;
-  font-weight: bold;
-  margin-bottom: 0.3rem;
-  color: #444;
+  font-weight: 500;
 }
 
+/* === Inputs === */
 .auth-input {
   width: 100%;
-  padding: 0.6rem;
+  padding: 10px 12px;
   margin-bottom: 1rem;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  font-size: 1rem;
+  border-radius: 8px;
+  border: 1px solid rgba(0,0,0,0.2);
+  outline: none;
+
+  background: rgba(255, 255, 255, 0.9); /* 🔥 solid */
+  color: #111; /* 🔥 dark text */
+
+  font-size: 0.95rem;
+  transition: 0.3s;
+}
+
+.auth-input::placeholder {
+  color: #555; /* darker placeholder */
 }
 
 .auth-input:focus {
-  outline: none;
-  border-color: #007bff;
+  border: 1px solid #38bdf8;
+  background: #ffffff;
 }
 
 /* === Skill Section === */
 .skill-section {
-  margin-bottom: 1rem;
+  margin-bottom: 1.2rem;
 }
 
-.skill-chips {
+/* === Chips === */
+.skill-chips,
+.selected-skills {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.4rem;
-  margin-top: 0.5rem;
+  gap: 8px;
+  margin-top: 8px;
 }
 
 .chip {
-  background-color: #e0e0e0;
-  border-radius: 20px;
-  padding: 6px 12px;
-  font-size: 0.9rem;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 0.85rem;
   cursor: pointer;
-  transition: 0.3s ease;
+  transition: all 0.25s ease;
+
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+}
+
+.chip:hover {
+  transform: translateY(-2px) scale(1.05);
+  background: rgba(255, 255, 255, 0.35);
 }
 
 .chip.selected {
-  background-color: #007bff;
+  background: linear-gradient(135deg, #38bdf8, #6366f1);
   color: white;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+}
+
+.chip.selected:hover {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+}
+
+/* === Custom Skill Input === */
+.custom-skill-group {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
 }
 
 .custom-skill-input {
-  width: 100%;
-  padding: 0.5rem;
-  margin-top: 0.5rem;
-  font-size: 0.95rem;
-  border-radius: 6px;
-  border: 1px solid #ccc;
+  flex: 1;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: none;
+  outline: none;
+
+  background: rgba(255, 255, 255, 0.9);
+  color: #111;
 }
 
-/* === Button === */
+/* Add Button */
+.add-button {
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: white;
+  font-weight: 500;
+
+  transition: 0.3s;
+}
+
+.add-button:hover {
+  transform: scale(1.05);
+  background: linear-gradient(135deg, #16a34a, #15803d);
+}
+
+/* === Submit Button === */
 .auth-button {
   width: 100%;
-  padding: 0.75rem;
+  padding: 12px;
   margin-top: 1rem;
-  background-color: #007bff;
-  color: white;
+  border-radius: 10px;
   border: none;
-  border-radius: 6px;
-  font-size: 1rem;
   cursor: pointer;
-  transition: background 0.3s ease;
+
+  font-size: 1rem;
+  font-weight: 600;
+
+  background: linear-gradient(135deg, #6366f1, #38bdf8);
+  color: white;
+
+  transition: 0.3s;
 }
 
 .auth-button:hover {
-  background-color: #0056b3;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(56, 189, 248, 0.5);
 }
 
 /* === Messages === */
 .error-message {
-  color: #d32f2f;
-  font-size: 0.9rem;
-  margin-top: -0.5rem;
-  margin-bottom: 1rem;
+  color: #f87171;
   text-align: center;
+  margin: 10px 0;
 }
 
 .success-message {
-  color: #388e3c;
-  font-size: 0.9rem;
-  margin-top: -0.5rem;
-  margin-bottom: 1rem;
+  color: #4ade80;
   text-align: center;
+  margin: 10px 0;
 }
 
-.custom-skill-group {
-  display: flex;
-  gap: 8px;
-  margin-top: 8px;
-}
-
-.custom-chip {
-  background-color: #e3f2fd;
-  color: #1976d2;
-}
-
-.custom-skill-group {
-  display: flex;
-  gap: 8px;
-  margin-top: 8px;
-}
-
-.add-button {
-  background-color: #1976d2;
-  color: white;
-  border: none;
-  padding: 6px 12px;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-
-
-/* === Mobile Responsiveness === */
+/* === Mobile === */
 @media (max-width: 480px) {
   .auth-card {
     width: 90%;
@@ -189,20 +221,10 @@
   }
 
   .auth-title {
-    font-size: 1.5rem;
+    font-size: 1.6rem;
   }
 
   .chip {
-    font-size: 0.8rem;
-    padding: 5px 10px;
-  }
-
-  .auth-input,
-  .custom-skill-input {
-    font-size: 0.9rem;
-  }
-
-  .auth-button {
-    font-size: 0.95rem;
+    font-size: 0.75rem;
   }
 }

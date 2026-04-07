@@ -1,7 +1,8 @@
 import '../styles/Match.css';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+
+const API_URL = 'https://your-backend.onrender.com';
 
 function Match() {
   const [matches, setMatches] = useState([]);
@@ -10,134 +11,81 @@ function Match() {
   const [pendingRequests, setPendingRequests] = useState([]);
   const [successMsg, setSuccessMsg] = useState('');
 
-  const userId = localStorage.getItem('userId');
-  const navigate = useNavigate();
+  const token = localStorage.getItem('token');
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // ✅ Get Matches
-        const matchRes = await axios.post(
-          'http://localhost:5000/api/match',
-          { userId }
-        );
+        const config = { headers: { Authorization: `Bearer ${token}` } };
+        const matchRes = await axios.get(`${API_URL}/api/match`, config);
         setMatches(matchRes.data.matchedUsers);
-
-        // ✅ Get Friends
-        const friendsRes = await axios.get(
-          `http://localhost:5000/api/friends/${userId}`
-        );
+        const friendsRes = await axios.get(`${API_URL}/api/friends`, config);
         setFriends(friendsRes.data.map(f => f.id));
-
-        // ✅ Get Pending Friend Requests
-        const pendingRes = await axios.get(
-          `http://localhost:5000/api/sent-friend-requests/${userId}`
-        );
-        setPendingRequests(
-          pendingRes.data.map(req => req.receiver_id)
-        );
-
+        const pendingRes = await axios.get(`${API_URL}/api/sent-friend-requests`, config);
+        setPendingRequests(pendingRes.data.map(req => req.receiver_id));
       } catch (err) {
         console.error('Error fetching data:', err);
-        setError('❌ Failed to fetch data. Please try again.');
+        setError('❌ Failed to fetch data.');
       }
     };
+    if (token) fetchData();
+  }, [token]);
 
-    if (userId) fetchData();
-  }, [userId]);
-
-  // ✅ Send Friend Request
   const sendFriendRequest = async (receiverId) => {
     try {
       const res = await axios.post(
-        'http://localhost:5000/api/friend-request',
-        {
-          senderId: userId,
-          receiverId,
-        }
+        `${API_URL}/api/friend-request`,
+        { receiverId },
+        { headers: { Authorization: `Bearer ${token}` } }
       );
-
       setPendingRequests([...pendingRequests, receiverId]);
       setSuccessMsg(res.data.message || '✅ Friend request sent!');
-
       setTimeout(() => setSuccessMsg(''), 3000);
-
     } catch (err) {
-      console.error("Failed to send friend request:", err);
-      setError("⚠️ Could not send friend request.");
+      console.error(err);
+      setError('⚠️ Could not send friend request.');
     }
   };
 
   return (
     <div className="matches-container">
-      <h1 className="matches-title">🤝 Find Your Perfect Match</h1>
-      <p className="match-subtitle">
-        Explore learners and teachers aligned with your skill goals.
-      </p>
-
+      <h1 className="matches-title">🤝 Skill Matches</h1>
+      <p className="match-subtitle">Find people who can teach you and learn from you</p>
       {error && <p className="error-message">{error}</p>}
       {successMsg && <p className="success-message">{successMsg}</p>}
-
       {matches.length === 0 ? (
-        <p className="no-matches">
-          😕 No matches found at the moment. Try updating your skills or check back later!
-        </p>
+        <p className="no-matches">No matches found</p>
       ) : (
         <div className="match-cards">
           {matches.map(user => (
             <div key={user.id} className="match-card">
-
-              <div className="profile-circle">
-                {user.name?.charAt(0).toUpperCase()}
+              <div className="profile">
+                <div className="profile-circle">{user.name?.charAt(0).toUpperCase()}</div>
+                <div className="match-name">{user.name}</div>
               </div>
-
-              <div className="match-name">
-                {user.name}
-              </div>
-
-              <div className="match-section">
-                <strong>Can Teach:</strong>
+              <div className="skill-section">
+                <div className="skill-title">Can Teach</div>
                 <div className="badge-container">
-                  {user.skills_to_teach?.map((skill, i) => (
-                    <span key={i} className="badge">
-                      {skill}
-                    </span>
-                  ))}
+                  {user.skills_to_teach?.map((s, i) => <span key={i} className="badge">{s}</span>)}
                 </div>
               </div>
-
-              <div className="match-section">
-                <strong>Wants to Learn:</strong>
+              <div className="skill-section">
+                <div className="skill-title">Wants to Learn</div>
                 <div className="badge-container">
-                  {user.skills_to_learn?.map((skill, i) => (
-                    <span key={i} className="badge badge-learn">
-                      {skill}
-                    </span>
-                  ))}
+                  {user.skills_to_learn?.map((s, i) => <span key={i} className="badge badge-learn">{s}</span>)}
                 </div>
               </div>
-
-              <div className="match-actions">
-
+              <div className="action-area">
                 {friends.includes(user.id) ? (
-                  <span className="friend-status success">
-                    ✅ Already Friends
-                  </span>
+                  <span className="friend-status success">✅ Friends</span>
                 ) : pendingRequests.includes(user.id) ? (
-                  <span className="friend-status pending">
-                    ⏳ Request Sent
-                  </span>
+                  <span className="friend-status pending">⏳ Request Sent</span>
                 ) : (
-                  <button
-                    className="chat-button"
-                    onClick={() => sendFriendRequest(user.id)}
-                  >
-                    Send Friend Request 👋
+                  <button className="chat-button" onClick={() => sendFriendRequest(user.id)}>
+                    Send Friend Request
                   </button>
                 )}
-
               </div>
-
             </div>
           ))}
         </div>

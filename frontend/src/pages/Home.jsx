@@ -7,7 +7,7 @@ function Home() {
     <div className="home-container">
       <header className="hero-section">
         <div className="hero-text">
-          <h1 className="home-title">SkillSwap 🚀</h1>
+          <h1 className="home-title">SkillSwap </h1>
           <p className="home-tagline">
             Learn what you love. Teach what you know. <br />
             Connect, grow, and collaborate through real-time learning.

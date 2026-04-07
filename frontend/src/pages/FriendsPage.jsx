@@ -1,20 +1,27 @@
-// src/pages/FriendsPage.jsx
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { openStudyRoom } from '../components/openStudyRoom';
 import '../styles/FriendsPage.css';
 
+const API_URL = 'https://your-backend.onrender.com';
+
 function FriendsPage() {
   const [friends, setFriends] = useState([]);
   const userId = localStorage.getItem('userId');
+  const token = localStorage.getItem('token');
   const navigate = useNavigate();
 
   useEffect(() => {
-    axios.get(`http://localhost:5000/api/friends/${userId}`)// ✅ Updated URL
+    if (!userId || !token) return;
+
+    axios
+      .get(`${API_URL}/api/friends`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
       .then(res => setFriends(res.data))
       .catch(err => console.error('Error fetching friends:', err));
-  }, []);
+  }, [userId, token]);
 
   const goToStudyRoom = (friend) => {
     const path = openStudyRoom({

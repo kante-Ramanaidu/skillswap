@@ -92,3 +92,78 @@
     text-align: left;
   }
 }
+@media (max-width: 768px) {
+
+  .history-page {
+    padding: 16px;
+    border-radius: 12px;
+  }
+
+  /* Hide table head */
+  .history-table thead {
+    display: none;
+  }
+
+  .history-table,
+  .history-table tbody,
+  .history-table tr,
+  .history-table td {
+    display: block;
+    width: 100%;
+  }
+
+  /* Each row becomes a card */
+  .history-table tr {
+    margin-bottom: 1rem;
+    padding: 12px;
+
+    background: var(--card-bg);
+    backdrop-filter: blur(10px);
+
+    border-radius: 12px;
+    border: 1px solid var(--border);
+
+    box-shadow: var(--shadow-soft);
+  }
+
+  /* Each cell becomes row inside card */
+  .history-table td {
+    text-align: left;
+    padding: 10px 10px 10px 50%;
+    position: relative;
+
+    font-size: 0.9rem;
+    border: none;
+  }
+
+  /* Label (left side) */
+  .history-table td::before {
+    content: attr(data-label);
+
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+
+    font-weight: 600;
+    color: var(--text-light);
+
+    font-size: 0.8rem;
+  }
+
+  /* Add spacing between fields */
+  .history-table td:not(:last-child) {
+    border-bottom: 1px dashed #e5e7eb;
+  }
+}
+
+/* === Small Mobile === */
+@media (max-width: 480px) {
+  .history-page h2 {
+    font-size: 1.4rem;
+  }
+
+  .history-table td {
+    padding-left: 45%;
+  }
+}

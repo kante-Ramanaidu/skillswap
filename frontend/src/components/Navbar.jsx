@@ -56,15 +56,15 @@ function Navbar() {
         <ul className="navbar-dropdown">
           {isMobile && (
             <>
-              <li onClick={() => handleNavigate('/match')}>🤝 Matches</li>
-              <li onClick={() => handleNavigate(`/progress/${userId}`)}>📊 Progress</li>
-              <li onClick={() => handleNavigate('/profile')}>👤 Profile</li>
+              <li onClick={() => handleNavigate('/match')}> Matches</li>
+              <li onClick={() => handleNavigate(`/progress/${userId}`)}> Progress</li>
+              <li onClick={() => handleNavigate('/profile')}> Profile</li>
             </>
           )}
-          <li onClick={() => handleNavigate('/friend-requests')}>👥Friend Requests</li>
-          <li onClick={() => handleNavigate('/friends')}>✅Friends</li>
-          <li onClick={() => handleNavigate('/history')}>📖History</li>
-          <li onClick={handleLogout}>🚪Logout</li>
+          <li onClick={() => handleNavigate('/friend-requests')}>Friend Requests</li>
+          <li onClick={() => handleNavigate('/friends')}>Friends</li>
+          <li onClick={() => handleNavigate('/history')}>History</li>
+          <li onClick={handleLogout}>➜]Logout</li>
         </ul>
       )}
     </nav>
