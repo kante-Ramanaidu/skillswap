@@ -2,7 +2,7 @@ import '../styles/Match.css';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 
-const API_URL = 'https://your-backend.onrender.com';
+const API_URL = 'https://skillswap-backend-pbn7.onrender.com';
 
 function Match() {
   const [matches, setMatches] = useState([]);

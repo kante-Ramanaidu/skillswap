@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import '../styles/ProfilePage.css';
 
-const API_URL = 'https://your-backend.onrender.com';
+const API_URL = 'https://skillswap-backend-pbn7.onrender.com';
 
 function ProfilePage() {
   const [profile, setProfile] = useState(null);

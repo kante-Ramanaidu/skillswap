@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import '../styles/Chat.css';
 
-const API_URL = 'https://your-backend.onrender.com';
+const API_URL = 'https://skillswap-backend-pbn7.onrender.com'; // Update with your backend URL
 
 function Chat({ roomId, socket }) {
   const senderId = localStorage.getItem('userId');

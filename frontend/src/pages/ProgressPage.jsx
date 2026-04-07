@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { openStudyRoom } from '../components/openStudyRoom';
 import '../styles/ProgressPage.css';
 
-const API_URL = 'https://your-backend.onrender.com';
+const API_URL = 'https://skillswap-backend-pbn7.onrender.com';
 
 function ProgressPage() {
   const navigate = useNavigate();

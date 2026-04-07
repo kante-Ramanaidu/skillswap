@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import '../styles/TimerSession.css';
 
-const API_URL = 'https://your-backend.onrender.com';
+const API_URL = 'https://skillswap-backend-pbn7.onrender.com';
 
 function TimerSession({ session, onEnd }) {
   const intervalRef = useRef(null);

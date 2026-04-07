@@ -4,7 +4,7 @@ import axios from 'axios';
 import AuthFormInput from '../components/AuthFormInput';
 import '../styles/Auth.css';
 
-const API_URL = 'https://your-backend.onrender.com';
+const API_URL = 'https://skillswap-backend-pbn7.onrender.com';
 
 function Signup() {
   const navigate = useNavigate();

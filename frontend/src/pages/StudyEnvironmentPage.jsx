@@ -9,7 +9,7 @@ import SessionForm from '../components/SessionForm';
 import TimerSession from '../components/TimerSession';
 import '../styles/StudyEnvironmentPage.css';
 
-const API_URL = 'https://your-backend.onrender.com';
+const API_URL = 'https://skillswap-backend-pbn7.onrender.com';
 
 function StudyEnvironmentPage() {
   const { roomId } = useParams();

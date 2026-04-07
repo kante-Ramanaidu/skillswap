@@ -4,7 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import { openStudyRoom } from '../components/openStudyRoom';
 import '../styles/FriendsPage.css';
 
-const API_URL = 'https://your-backend.onrender.com';
+const API_URL = 'https://skillswap-backend-pbn7.onrender.com';
+
 
 function FriendsPage() {
   const [friends, setFriends] = useState([]);
