@@ -3,8 +3,6 @@ import http from 'http';
 import { Server } from 'socket.io';
 import dotenv from 'dotenv';
 import cors from 'cors';
-import path from 'path';
-import { fileURLToPath } from 'url';
 
 import authRoutes      from './routes/auth.js';
 import matchRoutes     from './routes/match.js';
@@ -19,9 +17,6 @@ import sessionsRoutes  from './routes/session.js';
 import setupSockets from './sockets/index.js';
 
 dotenv.config();
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname  = path.dirname(__filename);
 
 const app    = express();
 const server = http.createServer(app);
@@ -54,13 +49,6 @@ app.use('/api/progress',  progressRoutes);
 app.use('/api/schedules', schedulesRoutes);
 app.use('/api/profile',   profileRoutes);
 app.use('/api',           sessionsRoutes);
-
-// Serve React frontend
-app.use(express.static(path.join(__dirname, '../frontend/dist')));
-
-app.get(/^(?!\/api).*$/, (req, res) => {
-  res.sendFile(path.join(__dirname, '../frontend/dist', 'index.html'));
-});
 
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {
