@@ -4,6 +4,17 @@ A real-time peer-to-peer skill exchange platform where users can teach what they
 
 ---
 
+🚩 Problem Statement
+In today's world, millions of learners want to gain new skills — but they face two major challenges:
+
+High cost of courses and mentorships — Quality learning resources are expensive and out of reach for many students and self-learners.
+Lack of access to trusted mentors — Even motivated learners struggle to find the right people to guide them.
+
+At the same time, there are countless people who have real knowledge and a genuine willingness to teach — but there is no proper platform that connects them in a meaningful, structured way.
+SkillSwap solves this. It is a platform where users can exchange their skills with each other using real-time features — no money involved, just knowledge shared between people who want to teach and learn together.
+
+---
+
 ## 🌐 Live Demo
 
 - **Frontend:** https://skillswap-frontend-iuwr.onrender.com
@@ -89,7 +100,7 @@ skillswap/
 
 ### 1. Clone the repo
 ```bash
-git clone 
+git clone https://github.com/kante-Ramanaidu/skillswap
 cd skillswap
 ```
 
