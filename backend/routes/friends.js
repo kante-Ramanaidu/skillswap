@@ -118,4 +118,15 @@ router.get('/sent-friend-requests', authMiddleware, async (req, res) => {
   }
 });
 
+router.post('/friend-request/decline', authMiddleware, async (req, res) => {
+  const { requestId } = req.body;
+  try {
+    await pool.query('DELETE FROM friend_requests WHERE id = $1', [requestId]);
+    res.json({ message: 'Request declined' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Failed to decline request' });
+  }
+});
+
 export default router;

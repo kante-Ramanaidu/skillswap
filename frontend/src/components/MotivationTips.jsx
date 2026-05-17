@@ -76,7 +76,7 @@ function MotivationTips() {
         ))}
       </ul>
       {/* ✅ Fixed: added button label */}
-      <button className="next-quote-btn" onClick={handleRefresh}>🔁 New Tips</button>
+      <button className="next-quote-btn" onClick={handleRefresh}>New Tips</button>
     </div>
   );
 }

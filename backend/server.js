@@ -1,7 +1,9 @@
+import dotenv from 'dotenv';
+dotenv.config(); // ✅ FIRST before everything
+
 import express from 'express';
 import http from 'http';
 import { Server } from 'socket.io';
-import dotenv from 'dotenv';
 import cors from 'cors';
 
 import authRoutes      from './routes/auth.js';
@@ -16,7 +18,9 @@ import sessionsRoutes  from './routes/session.js';
 
 import setupSockets from './sockets/index.js';
 
-dotenv.config();
+console.log('JWT_SECRET:', process.env.JWT_SECRET);
+console.log('EMAIL_USER:', process.env.EMAIL_USER);
+console.log('EMAIL_PASS:', process.env.EMAIL_PASS);
 
 const app    = express();
 const server = http.createServer(app);

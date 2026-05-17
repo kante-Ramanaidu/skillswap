@@ -1,230 +1,491 @@
-/* === Background === */
-.auth-page {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  background: url('../assets/images/skill.jpg') no-repeat center center/cover;
-  position: relative;
+/* ============================================
+   Auth.css — SkillSwap Futuristic Theme
+   Covers: Login + Signup pages
+   ============================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+/* ── Reset ── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-/* Overlay */
+/* ============================================
+   PAGE WRAPPER
+   ============================================ */
+.auth-page {
+  font-family: 'Inter', -apple-system, sans-serif;
+  background: linear-gradient(135deg, #0f0f1a 0%, #1a1030 40%, #0d1a2e 100%);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Background glow blob */
 .auth-page::before {
   content: '';
   position: absolute;
-  inset: 0;
-  background: rgba(15, 23, 42, 0.6);
-  backdrop-filter: blur(6px);
-  z-index: 1;
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 700px;
+  height: 400px;
+  background: radial-gradient(ellipse, rgba(0, 230, 180, 0.07) 0%, transparent 70%);
+  pointer-events: none;
 }
 
-/* === Card (Glass UI) === */
+/* ============================================
+   CARD
+   ============================================ */
 .auth-card {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 24px;
+  padding: 44px 40px;
+  width: 100%;
+  max-width: 480px;
   position: relative;
-  z-index: 2;
-  width: 420px;
-  max-height: 92vh;
-  overflow-y: auto;
-  padding: 2rem;
-  border-radius: 16px;
-
-  background: rgba(255, 255, 255, 0.15); /* 🔥 more visible */
-  backdrop-filter: blur(18px);
-  border: 1px solid rgba(255, 255, 255, 0.25);
-
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
-  animation: fadeUp 0.5s ease;
+  z-index: 1;
+  backdrop-filter: blur(12px);
 }
 
-/* Animation */
-@keyframes fadeUp {
-  from {
-    opacity: 0;
-    transform: translateY(40px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.auth-card.signup-card {
+  max-width: 540px;
 }
 
-/* Scrollbar */
-.auth-card::-webkit-scrollbar {
-  width: 6px;
-}
-.auth-card::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.3);
-  border-radius: 10px;
-}
-
-/* === Title === */
+/* ============================================
+   TITLE
+   ============================================ */
 .auth-title {
-  font-size: 2rem;
+  font-size: 1.9rem;
+  font-weight: 800;
+  background: linear-gradient(90deg, #4fffcb, #00d4ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -0.5px;
+  margin-bottom: 8px;
   text-align: center;
-  color: #fff;
-  margin-bottom: 1.5rem;
-  font-weight: 600;
 }
 
-/* === Labels === */
-.auth-label {
-  color: #f1f5f9; /* 🔥 brighter */
+.auth-welcome {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #4fffcb;
+  margin-bottom: 6px;
+  text-align: center;
+}
+
+.auth-subtitle {
   font-size: 0.9rem;
-  margin-bottom: 5px;
-  display: block;
-  font-weight: 500;
+  color: #64748b;
+  margin-bottom: 28px;
+  line-height: 1.6;
+  text-align: center;
 }
 
-/* === Inputs === */
+/* ============================================
+   LABEL
+   ============================================ */
+.auth-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: #94a3b8;
+  margin-bottom: 7px;
+  letter-spacing: 0.2px;
+}
+
+/* ============================================
+   INPUTS
+   ============================================ */
+.auth-input-wrap {
+  position: relative;
+  margin-bottom: 18px;
+}
+
 .auth-input {
   width: 100%;
-  padding: 10px 12px;
-  margin-bottom: 1rem;
-  border-radius: 8px;
-  border: 1px solid rgba(0,0,0,0.2);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1.5px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 12px 16px;
+  font-size: 14px;
+  color: #e2e8f0;
+  font-family: inherit;
   outline: none;
-
-  background: rgba(255, 255, 255, 0.9); /* 🔥 solid */
-  color: #111; /* 🔥 dark text */
-
-  font-size: 0.95rem;
-  transition: 0.3s;
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 .auth-input::placeholder {
-  color: #555; /* darker placeholder */
+  color: #475569;
 }
 
 .auth-input:focus {
-  border: 1px solid #38bdf8;
-  background: #ffffff;
+  border-color: rgba(79, 255, 203, 0.5);
+  box-shadow: 0 0 0 3px rgba(79, 255, 203, 0.08);
+  background: rgba(255, 255, 255, 0.07);
 }
 
-/* === Skill Section === */
+/* ============================================
+   REMEMBER ME + FORGOT PASSWORD ROW
+   ============================================ */
+.auth-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 4px 0 22px;
+}
+
+.remember-label {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 0.85rem;
+  color: #94a3b8;
+  cursor: pointer;
+  user-select: none;
+}
+
+/* Hide default checkbox */
+.remember-label input[type='checkbox'] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 17px;
+  height: 17px;
+  border: 1.5px solid rgba(255, 255, 255, 0.15);
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.04);
+  cursor: pointer;
+  position: relative;
+  flex-shrink: 0;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+/* Checked state */
+.remember-label input[type='checkbox']:checked {
+  background: rgba(79, 255, 203, 0.15);
+  border-color: #4fffcb;
+}
+
+/* Checkmark tick */
+.remember-label input[type='checkbox']:checked::after {
+  content: '';
+  position: absolute;
+  left: 4px;
+  top: 1px;
+  width: 5px;
+  height: 9px;
+  border: 2px solid #4fffcb;
+  border-top: none;
+  border-left: none;
+  transform: rotate(45deg);
+}
+
+.remember-label input[type='checkbox']:focus-visible {
+  outline: 2px solid rgba(79, 255, 203, 0.4);
+  outline-offset: 2px;
+}
+
+.forgot-link {
+  font-size: 0.85rem;
+  color: #4fffcb;
+  text-decoration: none;
+  font-weight: 500;
+  transition: opacity 0.2s;
+  white-space: nowrap;
+}
+
+.forgot-link:hover {
+  opacity: 0.7;
+  text-decoration: underline;
+}
+
+/* ============================================
+   SUBMIT BUTTON
+   ============================================ */
+.auth-button {
+  width: 100%;
+  background: linear-gradient(90deg, #00e6b4, #00b4d8);
+  color: #0f172a;
+  border: none;
+  border-radius: 12px;
+  padding: 13px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  transition: opacity 0.2s, transform 0.2s, box-shadow 0.2s;
+  margin-top: 8px;
+  letter-spacing: 0.2px;
+}
+
+.auth-button:hover {
+  opacity: 0.92;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 24px rgba(0, 230, 180, 0.25);
+}
+
+.auth-button:active {
+  transform: translateY(0);
+}
+
+/* ============================================
+   MESSAGES
+   ============================================ */
+.error-message {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.25);
+  color: #f87171;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 13px;
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+
+.success-message {
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  color: #34d399;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 13px;
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+
+/* ============================================
+   OR DIVIDER
+   ============================================ */
+.auth-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 24px 0 16px;
+}
+
+.divider-line {
+  flex: 1;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.divider-text {
+  font-size: 0.75rem;
+  color: #475569;
+  letter-spacing: 0.1em;
+}
+
+/* ============================================
+   REDIRECT LINK (login / signup)
+   ============================================ */
+.auth-redirect {
+  text-align: center;
+  font-size: 0.875rem;
+  color: #64748b;
+}
+
+.auth-link {
+  color: #4fffcb;
+  cursor: pointer;
+  font-weight: 600;
+  transition: opacity 0.2s;
+}
+
+.auth-link:hover {
+  opacity: 0.75;
+}
+
+/* ============================================
+   SKILL SECTIONS (Signup)
+   ============================================ */
 .skill-section {
-  margin-bottom: 1.2rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 20px;
 }
 
-/* === Chips === */
-.skill-chips,
+.skill-section .auth-label {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #cbd5e1;
+  margin-bottom: 14px;
+}
+
+.skill-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.chip {
+  padding: 5px 14px;
+  border-radius: 100px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1.5px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.04);
+  color: #94a3b8;
+  transition: all 0.18s ease;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.chip:hover {
+  border-color: rgba(79, 255, 203, 0.4);
+  color: #4fffcb;
+  background: rgba(79, 255, 203, 0.06);
+}
+
+.chip.selected {
+  background: rgba(79, 255, 203, 0.12);
+  border-color: rgba(79, 255, 203, 0.4);
+  color: #4fffcb;
+}
+
+.skill-input-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.skill-input {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1.5px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 10px 14px;
+  color: #e2e8f0;
+  font-size: 0.875rem;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.skill-input:focus {
+  border-color: rgba(79, 255, 203, 0.4);
+}
+
+.skill-input::placeholder {
+  color: #475569;
+}
+
+.skill-add-btn {
+  background: transparent;
+  border: 1.5px solid rgba(79, 255, 203, 0.4);
+  border-radius: 10px;
+  color: #4fffcb;
+  font-size: 0.875rem;
+  font-weight: 600;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.skill-add-btn:hover {
+  background: rgba(79, 255, 203, 0.08);
+  border-color: #4fffcb;
+}
+
 .selected-skills {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  margin-top: 8px;
+  margin-top: 12px;
+  min-height: 0;
 }
 
-.chip {
-  padding: 6px 14px;
-  border-radius: 999px;
-  font-size: 0.85rem;
-  cursor: pointer;
-  transition: all 0.25s ease;
-
-  background: rgba(255, 255, 255, 0.2);
-  color: #fff;
+/* ============================================
+   AUTH FOOTER LINK (legacy support)
+   ============================================ */
+.auth-footer {
+  text-align: center;
+  margin-top: 24px;
+  font-size: 13px;
+  color: #64748b;
 }
 
-.chip:hover {
-  transform: translateY(-2px) scale(1.05);
-  background: rgba(255, 255, 255, 0.35);
-}
-
-.chip.selected {
-  background: linear-gradient(135deg, #38bdf8, #6366f1);
-  color: white;
-  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
-}
-
-.chip.selected:hover {
-  background: linear-gradient(135deg, #ef4444, #dc2626);
-}
-
-/* === Custom Skill Input === */
-.custom-skill-group {
-  display: flex;
-  gap: 8px;
-  margin-top: 10px;
-}
-
-.custom-skill-input {
-  flex: 1;
-  padding: 8px 10px;
-  border-radius: 8px;
-  border: none;
-  outline: none;
-
-  background: rgba(255, 255, 255, 0.9);
-  color: #111;
-}
-
-/* Add Button */
-.add-button {
-  padding: 8px 14px;
-  border-radius: 8px;
-  border: none;
-  cursor: pointer;
-
-  background: linear-gradient(135deg, #22c55e, #16a34a);
-  color: white;
+.auth-footer a {
+  color: #4fffcb;
   font-weight: 500;
-
-  transition: 0.3s;
+  text-decoration: none;
 }
 
-.add-button:hover {
-  transform: scale(1.05);
-  background: linear-gradient(135deg, #16a34a, #15803d);
+.auth-footer a:hover {
+  text-decoration: underline;
 }
 
-/* === Submit Button === */
-.auth-button {
-  width: 100%;
-  padding: 12px;
-  margin-top: 1rem;
-  border-radius: 10px;
-  border: none;
-  cursor: pointer;
-
-  font-size: 1rem;
-  font-weight: 600;
-
-  background: linear-gradient(135deg, #6366f1, #38bdf8);
-  color: white;
-
-  transition: 0.3s;
-}
-
-.auth-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(56, 189, 248, 0.5);
-}
-
-/* === Messages === */
-.error-message {
-  color: #f87171;
-  text-align: center;
-  margin: 10px 0;
-}
-
-.success-message {
-  color: #4ade80;
-  text-align: center;
-  margin: 10px 0;
-}
-
-/* === Mobile === */
-@media (max-width: 480px) {
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 600px) {
   .auth-card {
-    width: 90%;
-    padding: 1.2rem;
+    padding: 32px 22px;
+    border-radius: 18px;
   }
 
   .auth-title {
     font-size: 1.6rem;
   }
 
-  .chip {
-    font-size: 0.75rem;
+  .auth-row {
+    flex-direction: row;
+    gap: 8px;
+  }
+
+  .skill-input-row {
+    flex-direction: column;
+  }
+
+  .skill-add-btn {
+    width: 100%;
+  }
+}
+/* ── Loading button ── */
+.auth-button:disabled {
+  opacity: 0.75;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-loader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(15, 23, 42, 0.3);
+  border-top-color: #0f172a;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+@media (max-width: 400px) {
+  .auth-page {
+    padding: 24px 12px;
+  }
+
+  .auth-card {
+    padding: 28px 18px;
   }
 }

@@ -2,7 +2,7 @@ import '../styles/Match.css';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 
-const API_URL = 'https://skillswap-backend-pbn7.onrender.com';
+const API_URL = import.meta.env.VITE_API_BASE_URL;
 
 function Match() {
   const [matches, setMatches] = useState([]);
@@ -43,13 +43,13 @@ function Match() {
       setTimeout(() => setSuccessMsg(''), 3000);
     } catch (err) {
       console.error(err);
-      setError('⚠️ Could not send friend request.');
+      setError(' Could not send friend request.');
     }
   };
 
   return (
     <div className="matches-container">
-      <h1 className="matches-title">🤝 Skill Matches</h1>
+      <h1 className="matches-title"> Skill Matches</h1>
       <p className="match-subtitle">Find people who can teach you and learn from you</p>
       {error && <p className="error-message">{error}</p>}
       {successMsg && <p className="success-message">{successMsg}</p>}

@@ -1,129 +1,175 @@
-/* === Dashboard Container === */
+/* ============================================
+   Dashboard.css — SkillSwap Futuristic Theme
+   ============================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+/* ── Reset ── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ── Page wrapper ── */
 .dashboard-container {
-  padding: 2rem 6%;
-  font-family: 'Poppins', sans-serif;
-  background: #f8fafc;
+  font-family: 'Inter', -apple-system, sans-serif;
+  background: linear-gradient(135deg, #0f0f1a 0%, #1a1030 40%, #0d1a2e 100%);
   min-height: 100vh;
+  color: #e2e8f0;
 }
 
-/* === Banner (Hero inside dashboard) === */
+/* ============================================
+   BANNER
+   ============================================ */
 .dashboard-banner {
-  position: relative;
-  background: linear-gradient(135deg, #0f172a, #1e293b);
-  color: white;
-  padding: 2.5rem 2rem;
-  border-radius: 1.2rem;
-  margin-bottom: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   text-align: center;
+  padding: 100px 24px 80px;
+  position: relative;
   overflow: hidden;
-
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
 }
 
-/* subtle glow */
-.dashboard-banner::after {
+/* Glowing background blob */
+.dashboard-banner::before {
   content: '';
   position: absolute;
-  width: 300px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 600px;
   height: 300px;
-  background: radial-gradient(circle, rgba(56,189,248,0.25), transparent);
-  top: -50px;
-  right: -50px;
-  filter: blur(60px);
+  background: radial-gradient(ellipse, rgba(0, 230, 180, 0.08) 0%, transparent 70%);
+  pointer-events: none;
 }
 
-/* Banner text */
 .dashboard-banner h1 {
-  font-size: 2.2rem;
-  margin-bottom: 0.5rem;
-  font-weight: 600;
+  font-size: clamp(2.2rem, 6vw, 4rem);
+  font-weight: 800;
+  background: linear-gradient(90deg, #4fffcb, #00d4ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -1px;
+  line-height: 1.15;
+  margin-bottom: 18px;
 }
 
 .dashboard-banner p {
-  font-size: 1rem;
-  opacity: 0.85;
+  font-size: clamp(0.95rem, 2vw, 1.15rem);
+  color: #94a3b8;
+  max-width: 480px;
+  line-height: 1.7;
+  margin-bottom: 36px;
 }
 
-/* === Cards Layout (Grid instead of flex) === */
+/* ============================================
+   CARDS SECTION
+   ============================================ */
 .dashboard-cards {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 32px 80px;
 }
 
-/* === Card === */
+/* ── Single Card ── */
 .card {
-  background: #ffffff;
-  border-radius: 1.2rem;
-  padding: 2rem;
-  text-align: left;
-
-  border: 1px solid #e2e8f0;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
-
-  transition: all 0.3s ease;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  padding: 36px 28px;
   cursor: pointer;
+  transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
   position: relative;
   overflow: hidden;
 }
 
-/* gradient hover glow */
 .card::before {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(120deg, transparent, rgba(99,102,241,0.1), transparent);
+  background: radial-gradient(ellipse at top left, rgba(0, 230, 180, 0.06), transparent 60%);
+  pointer-events: none;
   opacity: 0;
-  transition: 0.4s;
+  transition: opacity 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-6px);
+  border-color: rgba(79, 255, 203, 0.3);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4), 0 0 30px rgba(79, 255, 203, 0.08);
 }
 
 .card:hover::before {
   opacity: 1;
 }
 
-/* hover effect */
-.card:hover {
-  transform: translateY(-10px) scale(1.02);
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+/* Card icon box */
+.card-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  background: rgba(79, 255, 203, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  margin-bottom: 22px;
 }
 
-/* Title */
 .card h2 {
-  margin-bottom: 0.6rem;
-  color: #0f172a;
-  font-size: 1.3rem;
-  font-weight: 600;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #f1f5f9;
+  margin-bottom: 12px;
+  letter-spacing: -0.3px;
 }
 
-/* Description */
 .card p {
-  color: #475569;
-  font-size: 0.95rem;
-  margin-bottom: 1.2rem;
+  font-size: 0.9rem;
+  color: #64748b;
+  line-height: 1.7;
 }
 
-/* optional CTA inside card */
-.card .card-action {
-  font-size: 0.85rem;
-  color: #6366f1;
-  font-weight: 500;
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+/* Tablet */
+@media (max-width: 900px) {
+  .dashboard-cards {
+    grid-template-columns: repeat(2, 1fr);
+    padding: 0 24px 60px;
+  }
+
+  .dashboard-banner {
+    padding: 96px 24px 60px; /* was 72px — increased for navbar */
+  }
 }
 
-/* === Responsive === */
-@media (max-width: 768px) {
-  .dashboard-container {
-    padding: 1.5rem 1rem;
+/* Mobile */
+@media (max-width: 600px) {
+  .dashboard-cards {
+    grid-template-columns: 1fr;
+    padding: 0 16px 48px;
+    gap: 16px;
+  }
+
+  .dashboard-banner {
+    padding: 88px 16px 48px; /* was 56px — increased for navbar */
   }
 
   .dashboard-banner h1 {
-    font-size: 1.6rem;
-  }
-
-  .dashboard-banner p {
-    font-size: 0.9rem;
+    font-size: 2rem;
   }
 
   .card {
-    padding: 1.5rem;
+    padding: 28px 22px;
   }
 }

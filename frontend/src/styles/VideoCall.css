@@ -1,8 +1,15 @@
+/* ── VideoCall.css — Professional Dark UI ── */
+
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&display=swap');
+
+/* ════════════════════════════
+   OVERLAY
+════════════════════════════ */
 .vc-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.85);
-  backdrop-filter: blur(8px);
+  background: rgba(0, 0, 0, 0.82);
+  backdrop-filter: blur(10px);
   z-index: 200;
   display: flex;
   align-items: center;
@@ -15,97 +22,181 @@
   to   { opacity: 1; }
 }
 
+/* ════════════════════════════
+   MODAL
+   — fixed size with flex column
+   — video area fills all space between header and controls
+════════════════════════════ */
 .vc-modal {
-  background: #1a1d27;
-  border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 18px;
-  width: min(560px, 95vw);
+  font-family: 'DM Sans', sans-serif;
+  background: #111318;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  width: min(860px, 95vw);
+  height: min(600px, 90vh);
   overflow: hidden;
-  box-shadow: 0 24px 60px rgba(0,0,0,0.7);
+  box-shadow: 0 32px 80px rgba(0, 0, 0, 0.75);
   animation: vc-slide 0.25s ease;
+  display: flex;
+  flex-direction: column;
 }
 
 @keyframes vc-slide {
-  from { transform: translateY(20px); opacity: 0; }
+  from { transform: translateY(18px); opacity: 0; }
   to   { transform: translateY(0);    opacity: 1; }
 }
 
+/* ════════════════════════════
+   FULLSCREEN — fill entire screen
+════════════════════════════ */
+.vc-modal.vc-fullscreen {
+  width: 100vw !important;
+  height: 100vh !important;
+  border-radius: 0 !important;
+  max-width: unset !important;
+  max-height: unset !important;
+}
+
+/* ════════════════════════════
+   MINIMIZED — just the header
+════════════════════════════ */
+.vc-modal.vc-minimized {
+  height: auto !important;
+  min-height: unset !important;
+}
+
+.vc-modal.vc-minimized .vc-videos {
+  display: none;
+}
+
+/* ════════════════════════════
+   HEADER — fixed height, never shrinks
+════════════════════════════ */
 .vc-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 20px;
-  border-bottom: 1px solid rgba(255,255,255,0.07);
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  background: #111318;
+  flex-shrink: 0; /* never shrink */
+  z-index: 10;
 }
 
 .vc-header-info {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 }
 
 .vc-header-avatar {
-  width: 38px;
-  height: 38px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #38bdf8, #818cf8);
+  background: linear-gradient(135deg, #2dd4bf, #6366f1);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 700;
-  font-size: 0.85rem;
-  color: #0f1117;
+  font-weight: 600;
+  font-size: 13px;
+  color: #fff;
+  flex-shrink: 0;
 }
 
 .vc-header-name {
   font-weight: 600;
-  font-size: 0.95rem;
-  color: #e2e8f0;
+  font-size: 14px;
+  color: #f1f5f9;
+  letter-spacing: -0.01em;
 }
 
 .vc-header-status {
-  font-size: 0.78rem;
+  font-size: 11.5px;
   color: #64748b;
   margin-top: 2px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
 }
-.vc-header-status.connected { color: #34d399; }
-.vc-header-status.calling   { color: #38bdf8; }
-.vc-header-status.incoming  { color: #fbbf24; }
 
-.vc-close-btn {
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.08);
-  color: #94a3b8;
+.vc-header-status.connected  { color: #34d399; }
+.vc-header-status.calling    { color: #38bdf8; animation: vc-blink 1.4s infinite; }
+.vc-header-status.incoming   { color: #fbbf24; }
+.vc-header-status.connecting { color: #a78bfa; }
+
+.vc-status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #34d399;
+  display: inline-block;
+  animation: vc-pulse-dot 2s infinite;
+}
+
+@keyframes vc-pulse-dot {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.35; }
+}
+
+/* ── Window Controls ── */
+.vc-window-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.vc-wc-btn {
   width: 32px;
   height: 32px;
-  border-radius: 50%;
+  border-radius: 9px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.09);
   cursor: pointer;
-  font-size: 0.9rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s;
+  transition: background 0.18s;
 }
-.vc-close-btn:hover { background: rgba(248,113,113,0.15); color: #f87171; }
 
+.vc-wc-btn:hover          { background: rgba(255, 255, 255, 0.2); }
+.vc-wc-btn:hover span     { color: #ffffff; }
+.vc-wc-btn.close:hover    { background: rgba(239, 68, 68, 0.25); }
+.vc-wc-btn.close:hover span { color: #f87171; }
+
+/* ════════════════════════════
+   VIDEO AREA
+   — flex: 1 so it fills all space between header and controls
+   — position: relative so local PiP can be absolute inside it
+════════════════════════════ */
 .vc-videos {
   position: relative;
-  background: #0f1117;
-  aspect-ratio: 16/9;
+  flex: 1;              /* fills all remaining height */
   overflow: hidden;
+  background: #0a0c10;
+  min-height: 0;        /* required for flex children to shrink properly */
 }
 
+/* ── Remote video: fills the entire video area ── */
 .vc-video-remote {
-  width: 100%;
-  height: 100%;
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #0a0c10;
+  overflow: hidden;
 }
 
 .vc-video-remote video {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: cover;       /* fills without black bars */
+  display: block;
+  transform-origin: center center;
+  transition: transform 0.3s ease;
 }
 
+/* Placeholder shown before remote connects */
 .vc-video-placeholder {
   position: absolute;
   inset: 0;
@@ -113,47 +204,68 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 12px;
-  background: #0f1117;
+  gap: 14px;
+  background: #0d1117;
 }
 
 .vc-avatar-large {
-  width: 80px;
-  height: 80px;
+  width: 76px;
+  height: 76px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #38bdf8, #818cf8);
+  background: linear-gradient(135deg, #2dd4bf, #6366f1);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 700;
-  font-size: 1.8rem;
-  color: #0f1117;
+  font-weight: 600;
+  font-size: 26px;
+  color: #fff;
+  box-shadow: 0 0 0 10px rgba(99, 102, 241, 0.1);
 }
 
 .vc-video-placeholder p {
-  color: #94a3b8;
-  font-size: 0.9rem;
+  color: #64748b;
+  font-size: 13px;
   margin: 0;
+  letter-spacing: 0.02em;
 }
 
+/* Zoom badge */
+.vc-zoom-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: rgba(0, 0, 0, 0.6);
+  color: #cbd5e1;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 3px 9px;
+  border-radius: 20px;
+  letter-spacing: 0.03em;
+  pointer-events: none;
+  z-index: 5;
+}
+
+/* ── Local (self) video: small fixed PiP bottom-right ── */
 .vc-video-local {
   position: absolute;
-  bottom: 12px;
-  right: 12px;
-  width: 28%;
-  aspect-ratio: 4/3;
-  border-radius: 10px;
+  bottom: 14px;
+  right: 14px;
+  width: 180px;        /* fixed px — not % so it stays small */
+  height: 120px;
+  border-radius: 12px;
   overflow: hidden;
-  border: 2px solid rgba(255,255,255,0.12);
+  border: 1.5px solid rgba(255, 255, 255, 0.12);
   background: #1a1d27;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.6);
+  z-index: 10;
+  flex-shrink: 0;
 }
 
 .vc-video-local video {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transform: scaleX(-1);
+  display: block;
 }
 
 .vc-cam-off {
@@ -163,74 +275,256 @@
   align-items: center;
   justify-content: center;
   background: #1a1d27;
-  font-size: 0.75rem;
-  color: #64748b;
+  z-index: 2;
 }
 
+/* PiP face camera shown over screen share preview */
+.vc-cam-pip {
+  position: absolute;
+  bottom: 6px;
+  left: 6px;
+  width: 60px;
+  height: 45px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1.5px solid rgba(255, 255, 255, 0.2);
+  background: #111;
+  z-index: 12;
+  pointer-events: none;
+}
+
+/* Screen sharing badge */
+.vc-screen-badge {
+  position: absolute;
+  bottom: 6px;
+  left: 6px;
+  background: rgba(37, 99, 235, 0.85);
+  color: #fff;
+  font-size: 9px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 999px;
+  pointer-events: none;
+  z-index: 12;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/* ════════════════════════════
+   CONTROLS BAR — fixed height, never shrinks
+════════════════════════════ */
 .vc-controls {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 10px;
+  padding: 14px 20px 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+  background: #111318;
+  flex-wrap: wrap;
+  flex-shrink: 0; /* never shrink */
+}
+
+/* ── Icon button + label ── */
+.vc-icon-btn-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.vc-icon-btn {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.06);
+  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
-  padding: 18px 20px;
-  border-top: 1px solid rgba(255,255,255,0.07);
-  flex-wrap: wrap;
+  transition: background 0.18s, border-color 0.18s, transform 0.15s;
 }
 
-.vc-btn {
-  font-weight: 600;
-  font-size: 0.9rem;
+.vc-icon-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.18);
+  transform: scale(1.05);
+}
+
+.vc-icon-btn:active { transform: scale(0.95); }
+
+.vc-icon-btn.off {
+  background: rgba(239, 68, 68, 0.12);
+  border-color: rgba(239, 68, 68, 0.28);
+}
+
+.vc-icon-btn.off:hover { background: rgba(239, 68, 68, 0.2); }
+
+.vc-icon-btn.active {
+  background: rgba(37, 99, 235, 0.18);
+  border-color: rgba(37, 99, 235, 0.4);
+}
+
+.vc-icon-btn.active:hover { background: rgba(37, 99, 235, 0.28); }
+
+.vc-btn-label {
+  font-size: 10px;
+  color: #64748b;
+  letter-spacing: 0.02em;
+  font-weight: 400;
+  white-space: nowrap;
+}
+
+/* ── End call ── */
+.vc-end-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.vc-end-btn {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
   border: none;
-  border-radius: 10px;
-  padding: 10px 20px;
+  background: linear-gradient(135deg, #ef4444, #dc2626);
   cursor: pointer;
-  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 16px rgba(239, 68, 68, 0.38);
+  transition: filter 0.18s, transform 0.15s;
+}
+
+.vc-end-btn:hover  { filter: brightness(1.15); transform: scale(1.06); }
+.vc-end-btn:active { transform: scale(0.94); }
+
+.vc-end-label {
+  font-size: 10px;
+  color: #f87171;
+  letter-spacing: 0.02em;
+}
+
+/* ── Start call button ── */
+.vc-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  border: none;
+  border-radius: 12px;
+  padding: 12px 24px;
+  cursor: pointer;
+  transition: filter 0.18s, transform 0.15s;
 }
 
 .vc-btn-call {
   background: linear-gradient(135deg, #22c55e, #16a34a);
   color: white;
+  box-shadow: 0 4px 16px rgba(34, 197, 94, 0.3);
 }
-.vc-btn-call:hover { filter: brightness(1.15); transform: scale(1.02); }
 
-.vc-btn-end {
+.vc-btn-call:hover { filter: brightness(1.12); transform: scale(1.02); }
+
+/* ── Calling layout ── */
+.vc-calling-layout {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  width: 100%;
+  padding: 4px 0;
+}
+
+/* ── Incoming call ── */
+.vc-incoming-btns {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.vc-incoming-btn-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.vc-ans-btn {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  border: none;
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 16px rgba(34, 197, 94, 0.38);
+  transition: filter 0.18s, transform 0.15s;
+}
+
+.vc-ans-btn:hover  { filter: brightness(1.15); transform: scale(1.06); }
+.vc-ans-btn:active { transform: scale(0.94); }
+
+.vc-dec-btn {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  border: none;
   background: linear-gradient(135deg, #ef4444, #dc2626);
-  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 16px rgba(239, 68, 68, 0.38);
+  transition: filter 0.18s, transform 0.15s;
 }
-.vc-btn-end:hover { filter: brightness(1.15); }
 
-.vc-btn-toggle {
-  background: rgba(255,255,255,0.07);
-  border: 1px solid rgba(255,255,255,0.1);
-  color: #e2e8f0;
-  font-size: 1.1rem;
-  padding: 10px 16px;
-  border-radius: 10px;
-}
-.vc-btn-toggle.off {
-  background: rgba(248,113,113,0.12);
-  border-color: rgba(248,113,113,0.3);
-}
-.vc-btn-toggle:hover { background: rgba(255,255,255,0.12); }
+.vc-dec-btn:hover  { filter: brightness(1.15); transform: scale(1.06); }
+.vc-dec-btn:active { transform: scale(0.94); }
 
+.vc-ans-label { font-size: 10px; color: #4ade80; letter-spacing: 0.02em; }
+.vc-dec-label { font-size: 10px; color: #f87171; letter-spacing: 0.02em; }
+
+/* Status text */
 .vc-calling-pulse {
   color: #38bdf8;
-  font-size: 0.9rem;
-  animation: blink 1.4s infinite;
+  font-size: 13px;
+  font-weight: 500;
+  animation: vc-blink 1.4s infinite;
 }
 
-@keyframes blink {
+@keyframes vc-blink {
   0%, 100% { opacity: 1; }
-  50% { opacity: 0.4; }
+  50%       { opacity: 0.4; }
 }
 
 .vc-ended-msg {
   color: #64748b;
-  font-size: 0.9rem;
+  font-size: 13px;
 }
 
-@media (max-width: 480px) {
-  .vc-modal { border-radius: 12px; }
-  .vc-video-local { width: 34%; }
-  .vc-btn { padding: 9px 14px; font-size: 0.85rem; }
+/* ════════════════════════════
+   RESPONSIVE
+════════════════════════════ */
+@media (max-width: 600px) {
+  .vc-modal {
+    width: 100vw;
+    height: 100vh;
+    border-radius: 0;
+  }
+  .vc-video-local {
+    width: 110px;
+    height: 80px;
+  }
+  .vc-icon-btn  { width: 42px; height: 42px; border-radius: 12px; }
+  .vc-end-btn   { width: 46px; height: 46px; }
+  .vc-btn       { padding: 10px 18px; font-size: 13px; }
+  .vc-controls  { gap: 8px; padding: 10px 12px 12px; }
 }

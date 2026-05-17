@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import '../styles/Chat.css';
 
-const API_URL = 'https://skillswap-backend-pbn7.onrender.com'; // Update with your backend URL
+const API_URL = import.meta.env.VITE_API_BASE_URL;
 
 function Chat({ roomId, socket }) {
   const senderId = localStorage.getItem('userId');
@@ -65,10 +65,10 @@ function Chat({ roomId, socket }) {
     <div className="chat-root">
       <div className="chat-header">
         <div className="chat-header-info">
-          <span className="chat-header-icon">💬</span>
+          <span className="chat-header-icon"></span>
           <span className="chat-header-name">{partnerName || 'Partner'}</span>
         </div>
-        <div className={`chat-conn-dot ${connected ? 'on' : 'off'}`} />
+        
       </div>
 
       <div className="chat-messages">

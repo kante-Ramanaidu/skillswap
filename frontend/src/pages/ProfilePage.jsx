@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import '../styles/ProfilePage.css';
 
-const API_URL = 'https://skillswap-backend-pbn7.onrender.com';
+const API_URL = import.meta.env.VITE_API_BASE_URL;
 
 function ProfilePage() {
   const [profile, setProfile] = useState(null);
@@ -54,7 +54,7 @@ function ProfilePage() {
 
   return (
     <div className="profile-container">
-      <h2 className="profile-heading">👤 Your Profile</h2>
+      <h2 className="profile-heading"> Your Profile</h2>
       {error && <p className="error-message">{error}</p>}
       {['name', 'phone'].map((field) => (
         <div className="profile-field" key={field}>

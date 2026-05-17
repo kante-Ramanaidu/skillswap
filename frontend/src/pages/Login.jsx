@@ -4,58 +4,38 @@ import AuthFormInput from '../components/AuthFormInput';
 import axios from 'axios';
 import '../styles/Auth.css';
 
-const API_URL = 'https://skillswap-backend-pbn7.onrender.com';
-
 function Login() {
-  // 🔹 State to store form inputs
   const [form, setForm] = useState({ email: '', password: '' });
-
-  // 🔹 State for error & success messages
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [rememberMe, setRememberMe] = useState(false);
 
   const navigate = useNavigate();
 
-  // 🔹 Handle input change
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  // 🔹 Handle login submit
   const handleLogin = async (e) => {
     e.preventDefault();
-
-    // Reset messages
     setError('');
     setSuccess('');
 
-    // 🔹 Basic validation
     if (!form.email || !form.password) {
-      setError('⚠️ Please fill in both email and password.');
+      setError('Please fill in both email and password.');
       return;
     }
 
     try {
-      // 🔹 Get base URL from .env
-    
-
-      // 🔹 Send login request to backend
+      const API_URL = import.meta.env.VITE_API_BASE_URL;
       const res = await axios.post(`${API_URL}/api/auth/login`, form);
 
-      // 🔹 Store JWT token in localStorage
       localStorage.setItem('token', res.data.token);
-
-      // 🔹 Store user ID (optional)
       localStorage.setItem('userId', res.data.user.id);
 
-      // 🔹 Show success message
-      setSuccess('✅ Login successful');
-
-      // 🔹 Redirect to dashboard after delay
+      setSuccess('Login successful');
       setTimeout(() => navigate('/dashboard'), 1000);
-
     } catch (err) {
-      // 🔹 Handle error from backend
       setError(err.response?.data?.message || 'Login failed.');
     }
   };
@@ -64,11 +44,10 @@ function Login() {
     <div className="auth-page">
       <div className="auth-card">
         <h2 className="auth-title">Login</h2>
+        <h6 className="auth-welcome">Welcome back</h6>
+        <p className="auth-subtitle">Login to continue learning and teaching skills</p>
 
-        {/* 🔹 Form */}
         <form onSubmit={handleLogin}>
-
-          {/* 🔹 Email Input */}
           <AuthFormInput
             label="Email"
             type="email"
@@ -77,7 +56,6 @@ function Login() {
             onChange={handleChange}
           />
 
-          {/* 🔹 Password Input */}
           <AuthFormInput
             label="Password"
             type="password"
@@ -86,17 +64,26 @@ function Login() {
             onChange={handleChange}
           />
 
-          {/* 🔹 Error Message */}
-          {error && <p className="error-message">{error}</p>}
+        
 
-          {/* 🔹 Success Message */}
+          {error && <p className="error-message">{error}</p>}
           {success && <p className="success-message">{success}</p>}
 
-          {/* 🔹 Submit Button */}
-          <button type="submit" className="auth-button">
-            Login
-          </button>
+          <button type="submit" className="auth-button">Login</button>
         </form>
+
+        {/* Divider */}
+        <div className="auth-divider">
+          <span className="divider-line" />
+          <span className="divider-text">OR</span>
+          <span className="divider-line" />
+        </div>
+
+        {/* Sign up redirect */}
+        <p className="auth-redirect">
+          Don't have an account?{' '}
+          <span className="auth-link" onClick={() => navigate('/signup')}>Sign up</span>
+        </p>
       </div>
     </div>
   );

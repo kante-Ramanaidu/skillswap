@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { openStudyRoom } from '../components/openStudyRoom';
 import '../styles/ProgressPage.css';
 
-const API_URL = 'https://skillswap-backend-pbn7.onrender.com';
+const API_URL = import.meta.env.VITE_API_BASE_URL;
 
 function ProgressPage() {
   const navigate = useNavigate();
@@ -34,7 +34,7 @@ function ProgressPage() {
     setFormError('');
     setSuccessMsg('');
     if (!form.friendId || !form.skill || !form.date || !form.time) {
-      setFormError('⚠️ Please fill all required fields.');
+      setFormError(' Please fill all required fields.');
       return;
     }
     const scheduled_time = new Date(`${form.date}T${form.time}`);
@@ -45,13 +45,13 @@ function ProgressPage() {
         { roomId, friendId: form.friendId, skill: form.skill, description: form.description, scheduled_time, role: form.role },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      setSuccessMsg('✅ Session created successfully!');
+      setSuccessMsg(' Session created successfully!');
       setForm({ friendId: '', skill: '', description: '', date: '', time: '', role: 'teacher' });
       const res = await axios.get(`${API_URL}/api/schedules/me`, { headers: { Authorization: `Bearer ${token}` } });
       setSchedules(res.data);
       setShowForm(false);
     } catch (err) {
-      setFormError('❌ Failed to create session. Please try again.');
+      setFormError(' Failed to create session. Please try again.');
       console.error(err);
     }
   };
@@ -79,11 +79,11 @@ function ProgressPage() {
 
   return (
     <div className="progress-container">
-      <h1 className="progress-title">📈 Track Your Progress</h1>
+      <h4 className="progress-title"> Track Your Progress</h4>
       <p className="progress-subtitle">Schedule sessions and track your learning journey with friends.</p>
       <div className="progress-actions">
         <button className="create-btn" onClick={() => setShowForm(!showForm)}>
-          {showForm ? 'Cancel' : '📅 Create Schedule'}
+          {showForm ? 'Cancel' : ' Create Schedule'}
         </button>
       </div>
       {showForm && (
@@ -102,7 +102,7 @@ function ProgressPage() {
           <textarea placeholder="Optional Description" value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} />
           <input type="date" value={form.date} onChange={e => setForm({ ...form, date: e.target.value })} />
           <input type="time" value={form.time} onChange={e => setForm({ ...form, time: e.target.value })} />
-          <button className="submit-btn" onClick={handleSubmit}>✅ Submit</button>
+          <button className="submit-btn" onClick={handleSubmit}>Submit</button>
         </div>
       )}
       <div className="section">

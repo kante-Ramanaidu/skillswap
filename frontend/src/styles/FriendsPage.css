@@ -1,103 +1,325 @@
-/* FriendsPage.css */
+/* ============================================
+   FriendsPage.css — SkillSwap Futuristic Theme
+   ============================================ */
 
-.friends-container {
-  padding: 2rem;
-  max-width: 960px;
-  margin: 0 auto;
-  text-align: center;
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
+/* ============================================
+   PAGE WRAPPER
+   ✅ 64px navbar + 40px breathing room
+   ============================================ */
+.friends-container {
+  font-family: 'Inter', -apple-system, sans-serif;
+  background: linear-gradient(135deg, #0f0f1a 0%, #1a1030 40%, #0d1a2e 100%);
+  min-height: 100vh;
+  padding: 104px 32px 64px;
+  color: #e2e8f0;
+}
+
+/* ============================================
+   PAGE HEADER
+   ============================================ */
 .friends-title {
-  font-size: 2rem;
-  font-weight: 700;
-  color: #9794c7; /* Indigo - consistent with app branding */
-  margin-bottom: 0.3rem;
+  font-size: clamp(1.8rem, 4vw, 2.4rem);
+  font-weight: 800;
+  text-align: center;
+  background: linear-gradient(90deg, #4fffcb, #00d4ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -0.5px;
+  margin-bottom: 8px;
 }
 
 .friends-subtitle {
-  font-size: 1rem;
-  color: #6b7280; /* Gray-600 */
-  margin-bottom: 2rem;
+  text-align: center;
+  font-size: 0.9rem;
+  color: #64748b;
+  margin-bottom: 32px;
 }
 
-/* Friends Card List */
-.friends-list {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 1.5rem;
-}
-
-/* Each Friend Card */
-.friend-card {
-  background: #ffffff;
-  padding: 1.25rem 1.5rem;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-  width: 100%;
-  max-width: 420px;
+/* ============================================
+   SEARCH BAR ROW
+   ============================================ */
+.friends-search-row {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  gap: 12px;
+  max-width: 600px;
+  margin: 0 auto 40px;
+}
+
+.friends-search-wrap {
+  flex: 1;
+  position: relative;
+}
+
+.friends-search-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 15px;
+  color: #475569;
+  pointer-events: none;
+}
+
+.friends-search {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 11px 16px 11px 42px;
+  font-size: 14px;
+  color: #e2e8f0;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.friends-search::placeholder {
+  color: #475569;
+}
+
+.friends-search:focus {
+  border-color: rgba(79, 255, 203, 0.4);
+  box-shadow: 0 0 0 3px rgba(79, 255, 203, 0.06);
+}
+
+.friends-filter-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 11px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #94a3b8;
+  cursor: pointer;
+  font-family: inherit;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+  white-space: nowrap;
+}
+
+.friends-filter-btn:hover {
+  background: rgba(79, 255, 203, 0.08);
+  border-color: rgba(79, 255, 203, 0.25);
+  color: #4fffcb;
+}
+
+/* ============================================
+   FRIENDS GRID — 4 columns
+   ============================================ */
+.friends-list {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* ============================================
+   FRIEND CARD
+   ============================================ */
+.friend-card {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
+  padding: 28px 20px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.friend-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at top center, rgba(79, 255, 203, 0.05), transparent 65%);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
 .friend-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+  transform: translateY(-4px);
+  border-color: rgba(79, 255, 203, 0.22);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4), 0 0 24px rgba(79, 255, 203, 0.05);
 }
 
-/* Avatar Circle */
+.friend-card:hover::before {
+  opacity: 1;
+}
+
+/* ============================================
+   AVATAR WITH ONLINE DOT
+   ============================================ */
+.friend-avatar-wrap {
+  position: relative;
+  display: inline-block;
+  margin-bottom: 4px;
+}
+
 .friend-avatar {
-  width: 48px;
-  height: 48px;
+  width: 62px;
+  height: 62px;
   border-radius: 50%;
-  background: linear-gradient(to right, #6366f1, #8b5cf6);
-  color: white;
-  font-weight: 600;
-  font-size: 1.25rem;
-  text-align: center;
-  line-height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: 800;
+  color: #0f172a;
+  background: linear-gradient(135deg, #4fffcb, #00b4d8);
+  flex-shrink: 0;
 }
 
-/* Friend Info Text */
+/* Rotate gradient per card position */
+.friend-card:nth-child(2) .friend-avatar { background: linear-gradient(135deg, #a78bfa, #6d28d9); color: #fff; }
+.friend-card:nth-child(3) .friend-avatar { background: linear-gradient(135deg, #60a5fa, #2563eb); color: #fff; }
+.friend-card:nth-child(4) .friend-avatar { background: linear-gradient(135deg, #f472b6, #ec4899); color: #fff; }
+.friend-card:nth-child(5) .friend-avatar { background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #0f172a; }
+.friend-card:nth-child(6) .friend-avatar { background: linear-gradient(135deg, #34d399, #059669); color: #0f172a; }
+.friend-card:nth-child(7) .friend-avatar { background: linear-gradient(135deg, #f87171, #ef4444); color: #fff; }
+.friend-card:nth-child(8) .friend-avatar { background: linear-gradient(135deg, #818cf8, #4f46e5); color: #fff; }
+
+/* Online dot */
+.friend-online-dot {
+  position: absolute;
+  bottom: 3px;
+  right: 3px;
+  width: 12px;
+  height: 12px;
+  background: #22c55e;
+  border-radius: 50%;
+  border: 2px solid #0f0f1a;
+}
+
+/* ============================================
+   FRIEND INFO
+   ============================================ */
 .friend-info {
-  flex: 1;
-  text-align: left;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
 }
 
 .friend-info h3 {
-  font-size: 1.1rem;
-  font-weight: 600;
-  margin: 0 0 0.3rem 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #f1f5f9;
+  text-align: center;
+  letter-spacing: -0.2px;
 }
 
-/* Study Room Button */
-.study-btn {
-  background: #9794c7;
-  border: none;
-  padding: 0.5rem 1rem;
-  font-size: 0.95rem;
+.friend-info p,
+.friend-specialty {
+  font-size: 12px;
+  color: #64748b;
+  text-align: center;
+}
+
+/* ============================================
+   SKILL BADGES ON FRIEND CARD
+   ============================================ */
+.friend-skills {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.friend-skill-badge {
+  padding: 3px 10px;
+  border-radius: 100px;
+  font-size: 11px;
   font-weight: 500;
-  color: white;
-  border-radius: 8px;
+  background: rgba(79, 255, 203, 0.08);
+  border: 1px solid rgba(79, 255, 203, 0.18);
+  color: #4fffcb;
+  white-space: nowrap;
+}
+
+/* ============================================
+   STUDY ROOM BUTTON
+   ============================================ */
+.study-btn {
+  width: 100%;
+  background: linear-gradient(90deg, #00e6b4, #00b4d8);
+  color: #0f172a;
+  border: none;
+  border-radius: 10px;
+  padding: 11px;
+  font-size: 13px;
+  font-weight: 700;
   cursor: pointer;
-  transition: background 0.3s ease;
+  font-family: inherit;
+  margin-top: 8px;
+  transition: opacity 0.2s, transform 0.2s, box-shadow 0.2s;
+  letter-spacing: 0.2px;
 }
 
 .study-btn:hover {
-  background: linear-gradient(to right, #4338ca, #6d28d9);
+  opacity: 0.9;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(0, 230, 180, 0.25);
 }
 
-/* Mobile Responsive */
-@media screen and (max-width: 600px) {
-  .friend-card {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
+.study-btn:active {
+  transform: translateY(0);
+}
+
+/* ============================================
+   EMPTY STATE
+   ============================================ */
+.friends-empty {
+  text-align: center;
+  color: #475569;
+  font-size: 0.95rem;
+  margin-top: 60px;
+  line-height: 1.7;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 1100px) {
+  .friends-list {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .friends-list {
+    grid-template-columns: repeat(2, 1fr);
   }
 
-  .friend-info {
-    text-align: center;
+  .friends-container {
+    padding: 100px 16px 48px;
+  }
+}
+
+@media (max-width: 480px) {
+  .friends-list {
+    grid-template-columns: 1fr;
+  }
+
+  .friends-title {
+    font-size: 1.6rem;
   }
 }

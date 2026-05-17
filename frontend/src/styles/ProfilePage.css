@@ -1,200 +1,513 @@
-/* === Root Theme (Premium Palette) === */
+/* =============================================
+   SkillSwap — ProfilePage.css
+   Futuristic Dark UI · Fully Responsive
+   ============================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap');
+
+/* ── CSS Variables (match dashboard palette) ── */
 :root {
-  --primary: #6366f1;
-  --primary-dark: #4f46e5;
-  --secondary: #38bdf8;
-
-  --bg-light: #f8fafc;
-  --card-bg: rgba(255, 255, 255, 0.7);
-
-  --text-dark: #0f172a;
-  --text-light: #64748b;
-
-  --border: rgba(255,255,255,0.3);
-
-  --shadow-soft: 0 10px 30px rgba(0,0,0,0.08);
-  --shadow-hover: 0 20px 50px rgba(0,0,0,0.12);
+  --bg-deep:        #0d0f1a;
+  --bg-card:        #131629;
+  --bg-card-hover:  #181c35;
+  --bg-field:       #1a1f38;
+  --border-subtle:  rgba(255, 255, 255, 0.07);
+  --border-glow:    rgba(0, 230, 195, 0.35);
+  --teal:           #00e6c3;
+  --teal-dim:       rgba(0, 230, 195, 0.15);
+  --teal-mid:       rgba(0, 230, 195, 0.55);
+  --purple-accent:  #7b5ea7;
+  --purple-glow:    rgba(123, 94, 167, 0.25);
+  --text-primary:   #e8eaf6;
+  --text-secondary: #8b90b8;
+  --text-muted:     #555a80;
+  --danger:         #ff5f6d;
+  --radius-card:    18px;
+  --radius-field:   12px;
+  --radius-btn:     10px;
+  --transition:     0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  --font-display:   'Syne', sans-serif;
+  --font-body:      'DM Sans', sans-serif;
+  --shadow-card:    0 8px 40px rgba(0, 0, 0, 0.55), 0 0 0 1px var(--border-subtle);
+  --shadow-glow:    0 0 28px rgba(0, 230, 195, 0.18);
 }
 
-/* === Page Background (IMPORTANT) === */
+/* ── Base Reset ── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
 body {
-  background: linear-gradient(135deg, #eef2ff, #f0f9ff);
+  background-color: var(--bg-deep);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
 }
 
-/* === Container === */
+/* ── Background Mesh (mimics dashboard atmosphere) ── */
+.profile-container::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(ellipse 70% 55% at 15% 10%, rgba(123, 94, 167, 0.22) 0%, transparent 60%),
+    radial-gradient(ellipse 55% 40% at 85% 80%, rgba(0, 230, 195, 0.10) 0%, transparent 55%),
+    var(--bg-deep);
+  pointer-events: none;
+}
+
+/* ── Page Container ── */
 .profile-container {
-  max-width: 720px;
-  margin: clamp(20px, 5vw, 60px) auto;
-  padding: clamp(20px, 3vw, 36px);
-
-  background: var(--card-bg);
-  backdrop-filter: blur(16px);
-
-  border-radius: 24px;
-  border: 1px solid var(--border);
-
-  box-shadow: var(--shadow-soft);
-  transition: all 0.3s ease;
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 110px 20px 80px;  /* increased top padding for navbar gap */
+  gap: 0;
 }
 
-/* subtle hover lift */
-.profile-container:hover {
-  box-shadow: var(--shadow-hover);
+/* ── Card Shell ── */
+.profile-container > *:not(.profile-heading):not(.error-message) {
+  width: 100%;
+  max-width: 680px;
 }
 
-/* === Heading === */
+/* ── Heading ── */
 .profile-heading {
-  font-size: clamp(1.6rem, 3vw, 2.2rem);
-  text-align: center;
-  margin-bottom: 32px;
-  font-weight: 700;
-  letter-spacing: -0.3px;
-
-  background: linear-gradient(90deg, var(--primary), var(--secondary));
+  font-family: var(--font-display);
+  font-size: clamp(1.8rem, 5vw, 2.8rem);
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  background: linear-gradient(135deg, #ffffff 30%, var(--teal) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 10px;
+  text-align: center;
+  width: 100%;
+  max-width: 680px;
 }
 
-/* === Field === */
-.profile-field {
-  margin-bottom: 22px;
-}
-
-/* Label */
-.profile-field label {
-  font-weight: 600;
-  font-size: 0.8rem;
-  color: var(--text-light);
-  margin-bottom: 6px;
+.profile-heading::after {
+  content: '';
   display: block;
-  letter-spacing: 0.4px;
+  width: 52px;
+  height: 3px;
+  background: linear-gradient(90deg, var(--teal), transparent);
+  border-radius: 2px;
+  margin: 10px auto 0;
 }
 
-/* === View Mode === */
+/* ── Error Banner ── */
+.error-message {
+  width: 100%;
+  max-width: 680px;
+  background: rgba(255, 95, 109, 0.12);
+  border: 1px solid rgba(255, 95, 109, 0.35);
+  color: var(--danger);
+  font-size: 0.875rem;
+  font-family: var(--font-body);
+  padding: 12px 18px;
+  border-radius: var(--radius-field);
+  margin-bottom: 12px;
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Profile Card (wraps all fields) ── */
+.profile-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+  width: 100%;
+  max-width: 680px;
+  margin-top: 28px;
+  animation: fadeUp 0.5s ease both;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Profile Field ── */
+.profile-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 22px 28px;
+  border-bottom: 1px solid var(--border-subtle);
+  transition: background var(--transition);
+  animation: fadeUp 0.4s ease both;
+}
+
+.profile-field:last-child {
+  border-bottom: none;
+}
+
+.profile-field:nth-child(1) { animation-delay: 0.05s; }
+.profile-field:nth-child(2) { animation-delay: 0.10s; }
+.profile-field:nth-child(3) { animation-delay: 0.15s; }
+.profile-field:nth-child(4) { animation-delay: 0.20s; }
+.profile-field:nth-child(5) { animation-delay: 0.25s; }
+
+.profile-field:hover {
+  background: var(--bg-card-hover);
+}
+
+/* ── Field Label ── */
+.profile-field label {
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  color: var(--teal);
+  opacity: 0.85;
+  user-select: none;
+}
+
+/* ── View Row ── */
 .view-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-
-  background: rgba(255, 255, 255, 0.6);
-  padding: 14px 16px;
-  border-radius: 14px;
-
-  border: 1px solid rgba(255,255,255,0.4);
-
-  transition: all 0.25s ease;
-}
-
-.view-row:hover {
-  transform: translateY(-2px);
-  background: #ffffff;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+  min-height: 36px;
 }
 
 .view-row span {
+  font-size: 1rem;
+  font-weight: 400;
+  color: var(--text-primary);
+  line-height: 1.5;
+  word-break: break-word;
   flex: 1;
-  color: var(--text-dark);
-  font-size: 0.95rem;
-  font-weight: 500;
 }
 
-/* === Edit Mode === */
+/* ── Edit Row ── */
 .edit-row {
   display: flex;
   align-items: center;
   gap: 10px;
-
-  background: rgba(255, 255, 255, 0.8);
-  padding: 12px;
-  border-radius: 14px;
-
-  border: 1px solid rgba(255,255,255,0.4);
+  flex-wrap: wrap;
 }
 
-/* Input */
 .edit-row input {
   flex: 1;
-  padding: 11px 14px;
-  border: 1px solid #e2e8f0;
-  border-radius: 10px;
+  min-width: 0;
+  background: var(--bg-field);
+  border: 1.5px solid var(--border-glow);
+  border-radius: var(--radius-field);
+  padding: 10px 16px;
+  font-family: var(--font-body);
   font-size: 0.95rem;
-
-  background: #f8fafc;
+  color: var(--text-primary);
   outline: none;
+  transition: border-color var(--transition), box-shadow var(--transition);
+  caret-color: var(--teal);
+}
 
-  transition: all 0.25s ease;
+.edit-row input::placeholder {
+  color: var(--text-muted);
+  font-size: 0.875rem;
 }
 
 .edit-row input:focus {
-  border-color: var(--primary);
-  background: #fff;
-  box-shadow: 0 0 0 3px rgba(99,102,241,0.15);
+  border-color: var(--teal);
+  box-shadow: 0 0 0 3px rgba(0, 230, 195, 0.12), var(--shadow-glow);
 }
 
-/* === Buttons === */
-button {
-  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-  color: white;
-  border: none;
-
-  padding: 9px 16px;
-  border-radius: 12px;
+/* ── Buttons ── */
+/* Edit (pencil) button */
+.view-row button {
+  flex-shrink: 0;
+  background: var(--teal-dim);
+  border: 1px solid rgba(0, 230, 195, 0.2);
+  border-radius: var(--radius-btn);
+  padding: 7px 12px;
+  font-size: 1rem;
   cursor: pointer;
-
-  font-weight: 600;
-  font-size: 0.85rem;
-
-  transition: all 0.25s ease;
+  color: var(--teal);
+  transition: background var(--transition), transform var(--transition), box-shadow var(--transition);
+  line-height: 1;
 }
 
-button:hover {
-  transform: translateY(-2px) scale(1.02);
-  box-shadow: 0 10px 25px rgba(99, 102, 241, 0.4);
+.view-row button:hover {
+  background: rgba(0, 230, 195, 0.28);
+  transform: scale(1.08);
+  box-shadow: 0 0 14px rgba(0, 230, 195, 0.25);
 }
 
-button:active {
+.view-row button:active {
   transform: scale(0.96);
 }
 
-/* Secondary Button */
-button.secondary {
-  background: rgba(229,231,235,0.8);
-  color: #374151;
+/* Save button */
+.edit-row button {
+  flex-shrink: 0;
+  background: linear-gradient(135deg, var(--teal) 0%, #00c9a7 100%);
+  border: none;
+  border-radius: var(--radius-btn);
+  padding: 10px 22px;
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: #0d0f1a;
+  cursor: pointer;
+  transition: opacity var(--transition), transform var(--transition), box-shadow var(--transition);
+  white-space: nowrap;
 }
 
-button.secondary:hover {
-  background: #e5e7eb;
-  box-shadow: none;
+.edit-row button:hover {
+  opacity: 0.88;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(0, 230, 195, 0.35);
 }
 
-/* === Responsive === */
+.edit-row button:active {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+/* ── Loading State ── */
+.profile-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: var(--bg-deep);
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  color: var(--teal);
+  letter-spacing: 1px;
+  gap: 12px;
+}
+
+.profile-loading::after {
+  content: '';
+  width: 20px;
+  height: 20px;
+  border: 2.5px solid var(--teal-dim);
+  border-top-color: var(--teal);
+  border-radius: 50%;
+  animation: spin 0.75s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Skills Tags (view mode) ── */
+.skills-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  flex: 1;
+}
+
+.skill-tag {
+  background: var(--teal-dim);
+  border: 1px solid rgba(0, 230, 195, 0.22);
+  color: var(--teal);
+  font-size: 0.78rem;
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: 0.4px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  white-space: nowrap;
+  transition: background var(--transition), transform var(--transition);
+}
+
+.skill-tag:hover {
+  background: rgba(0, 230, 195, 0.25);
+  transform: translateY(-1px);
+}
+
+/* ── Avatar / Header Block ── */
+.profile-avatar-block {
+  width: 100%;
+  max-width: 680px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-card);
+  padding: 24px 28px;
+  margin-top: 28px;
+  box-shadow: var(--shadow-card);
+  animation: fadeUp 0.4s ease both;
+}
+
+.profile-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, var(--purple-accent), var(--teal));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #fff;
+  flex-shrink: 0;
+  box-shadow: 0 0 0 3px rgba(0, 230, 195, 0.2), var(--shadow-glow);
+}
+
+.profile-avatar-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.profile-avatar-name {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.profile-avatar-email {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+/* ════════════════════════════════
+   RESPONSIVE BREAKPOINTS
+   ════════════════════════════════ */
+
+/* ── Tablet (≤ 768px) ── */
 @media (max-width: 768px) {
   .profile-container {
-    margin: 20px 12px;
-    padding: 20px;
-    border-radius: 18px;
+    padding: 90px 16px 60px;
   }
 
-  .edit-row,
-  .view-row {
+  .profile-heading {
+    font-size: clamp(1.5rem, 6vw, 2.2rem);
+  }
+
+  .profile-field {
+    padding: 18px 20px;
+  }
+
+  .profile-avatar-block {
+    padding: 20px;
+    gap: 16px;
+  }
+
+  .profile-avatar {
+    width: 54px;
+    height: 54px;
+    font-size: 1.3rem;
+    border-radius: 14px;
+  }
+
+  .profile-avatar-name {
+    font-size: 1.05rem;
+  }
+}
+
+/* ── Mobile (≤ 480px) ── */
+@media (max-width: 480px) {
+  .profile-container {
+    padding: 80px 12px 50px;
+  }
+
+  .profile-heading {
+    font-size: 1.55rem;
+    letter-spacing: -0.2px;
+  }
+
+  .profile-field {
+    padding: 16px;
+    gap: 10px;
+  }
+
+  .profile-field label {
+    font-size: 0.68rem;
+    letter-spacing: 1.1px;
+  }
+
+  .view-row span {
+    font-size: 0.92rem;
+  }
+
+  .edit-row {
     flex-direction: column;
     align-items: stretch;
   }
 
   .edit-row input {
     width: 100%;
+    font-size: 0.9rem;
   }
 
-  button {
+  .edit-row button {
     width: 100%;
-    margin-top: 6px;
+    padding: 12px;
+    font-size: 0.88rem;
+    text-align: center;
+  }
+
+  .view-row button {
+    padding: 7px 10px;
+    font-size: 0.9rem;
+  }
+
+  .profile-avatar-block {
+    padding: 16px;
+    gap: 14px;
+  }
+
+  .profile-avatar {
+    width: 48px;
+    height: 48px;
+    font-size: 1.15rem;
+    border-radius: 12px;
+  }
+
+  .profile-avatar-name {
+    font-size: 0.98rem;
+  }
+
+  .profile-avatar-email {
+    font-size: 0.78rem;
+  }
+
+  .skill-tag {
+    font-size: 0.72rem;
+    padding: 3px 10px;
   }
 }
 
-/* Small Mobile */
-@media (max-width: 480px) {
+/* ── Very small (≤ 360px) ── */
+@media (max-width: 360px) {
   .profile-heading {
-    font-size: 1.4rem;
+    font-size: 1.35rem;
+  }
+
+  .profile-field {
+    padding: 14px 12px;
+  }
+
+  .edit-row input {
+    padding: 9px 12px;
+    font-size: 0.85rem;
   }
 }

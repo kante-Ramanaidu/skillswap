@@ -19,7 +19,7 @@ const authenticate = (req, res, next) => {
 router.post('/sessions', authenticate, async (req, res) => {
   try {
     const userId = req.user.id;
-    const { type, subject, concept, duration, completedAt } = req.body;
+    const { type, subject, concept, duration } = req.body;
 
     if (!subject || !concept || !duration) {
       return res.status(400).json({ message: 'Missing required fields' });
@@ -27,8 +27,8 @@ router.post('/sessions', authenticate, async (req, res) => {
 
     await pool.query(
       `INSERT INTO session_history (user_id, type, subject, concept, duration, completed_at)
-       VALUES ($1, $2, $3, $4, $5, $6)`,
-      [userId, type, subject, concept, duration, completedAt]
+       VALUES ($1, $2, $3, $4, $5, NOW())`, // ✅ NOW() = PostgreSQL UTC, always correct
+      [userId, type, subject, concept, duration]
     );
 
     res.status(201).json({ message: 'Session saved successfully' });

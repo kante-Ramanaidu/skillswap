@@ -1,32 +1,67 @@
 import { useNavigate } from 'react-router-dom';
 import '../styles/Dashboard.css';
 
-
 function Dashboard() {
   const navigate = useNavigate();
 
+  // Get logged-in user ID
+  const userId = localStorage.getItem('userId');
+
   return (
     <div className="dashboard-container">
+
+      {/* ===== Banner ===== */}
       <header className="dashboard-banner">
         <h1>Welcome to SkillSwap</h1>
-        <p>Empowering peer-to-peer learning through shared knowledge.</p>
+
+        <p>
+          Learn new skills, teach others, and grow together through
+          collaborative peer-to-peer learning.
+        </p>
       </header>
 
+      {/* ===== Dashboard Cards ===== */}
       <section className="dashboard-cards">
-        <div className="card" onClick={() => navigate('/match')}>
-          <h2>🔍 Find Matches</h2>
-          <p>Connect with learners and mentors who align with your skill goals.</p>
+
+        {/* Find Matches */}
+        <div
+          className="card"
+          onClick={() => navigate('/match')}
+        >
+          <h2> Find Matches</h2>
+
+          <p>
+            Discover learners and mentors based on your
+            learning and teaching interests.
+          </p>
         </div>
 
-        <div className="card" onClick={() => navigate(`/progress/${localStorage.getItem('userId')}`)}>
-          <h2>📊 Track Progress</h2>
-          <p>Monitor your growth across learning and teaching sessions.</p>
+        {/* Track Progress */}
+        <div
+          className="card"
+          onClick={() => navigate(`/progress/${userId}`)}
+        >
+          <h2> Track Progress</h2>
+
+          <p>
+            Monitor completed topics, study sessions,
+            and your overall learning journey.
+          </p>
         </div>
 
-        <div className="card" onClick={() => navigate('/friends')}>
-          <h2>✅ Your Friends</h2>
-          <p>Manage your learning circle, start a study room, or collaborate.</p>
+        {/* Friends */}
+        <div
+          className="card"
+          onClick={() => navigate('/friends')}
+        >
+          <h2> Your Friends</h2>
+
+          <p>
+            Manage your connections, collaborate in study rooms,
+            and continue skill exchange together.
+          </p>
         </div>
+
       </section>
     </div>
   );

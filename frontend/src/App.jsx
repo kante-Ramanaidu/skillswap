@@ -16,7 +16,7 @@ import FriendsPage from "./pages/FriendsPage";
 import ProgressPage from "./pages/ProgressPage"; 
 import HistoryPage from "./pages/HistoryPage";
 import ProfilePage from './pages/ProfilePage'; // Adjust path if it's in a different folder
-
+import VerifyEmail from "./pages/VerifyEmail";
 
 <Route path="/history" element={<HistoryPage />} />
 
@@ -29,6 +29,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/verify-email" element={<VerifyEmail />} /> {/* ✅ Email Verification Page */}
 
         {/* Private Routes */}
         <Route element={<PrivateLayout />}>
