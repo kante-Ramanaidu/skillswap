@@ -4,21 +4,13 @@ dotenv.config();
 import express from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import nodemailer from 'nodemailer';
+import { Resend } from 'resend';
 import pool from '../config/db.js';
 
 const router = express.Router();
 
-// ✅ Nodemailer transporter — Brevo SMTP (works on Render free tier)
-const transporter = nodemailer.createTransport({
-  host: 'smtp-relay.brevo.com',
-  port: 587,
-  secure: false,
-  auth: {
-    user: process.env.BREVO_SMTP_USER,
-    pass: process.env.BREVO_SMTP_PASS,
-  }
-});
+// ✅ Resend client — uses HTTP API, works on Render free tier
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 // ✅ SIGNUP
 router.post('/signup', async (req, res) => {
@@ -62,11 +54,11 @@ router.post('/signup', async (req, res) => {
       { expiresIn: '24h' }
     );
 
-    // ✅ Send verification email
+    // ✅ Send verification email via Resend
     const verifyLink = `${process.env.CLIENT_URL}/verify-email?token=${verifyToken}`;
 
-    await transporter.sendMail({
-      from: `"SkillSwap" <${process.env.EMAIL_USER}>`,
+    await resend.emails.send({
+      from: 'onboarding@resend.dev',
       to: user.email,
       subject: 'Verify your SkillSwap email',
       html: `
