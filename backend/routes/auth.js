@@ -9,11 +9,11 @@ import pool from '../config/db.js';
 
 const router = express.Router();
 
-// ✅ Nodemailer transporter setup
+// ✅ Nodemailer transporter — port 465 for Render (587 is blocked)
 const transporter = nodemailer.createTransport({
   host: 'smtp.gmail.com',
-  port: 587,
-  secure: false,
+  port: 465,
+  secure: true,
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS,
@@ -66,7 +66,7 @@ router.post('/signup', async (req, res) => {
     const verifyLink = `${process.env.CLIENT_URL}/verify-email?token=${verifyToken}`;
 
     await transporter.sendMail({
-      from: process.env.EMAIL_USER,
+      from: `"SkillSwap" <${process.env.EMAIL_USER}>`,
       to: user.email,
       subject: 'Verify your SkillSwap email',
       html: `
