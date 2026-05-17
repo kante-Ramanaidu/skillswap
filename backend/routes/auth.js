@@ -9,14 +9,14 @@ import pool from '../config/db.js';
 
 const router = express.Router();
 
-// ✅ Nodemailer transporter — port 465 for Render (587 is blocked)
+// ✅ Nodemailer transporter — Brevo SMTP (works on Render free tier)
 const transporter = nodemailer.createTransport({
-  host: 'smtp.gmail.com',
-  port: 465,
-  secure: true,
+  host: 'smtp-relay.brevo.com',
+  port: 587,
+  secure: false,
   auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
+    user: process.env.BREVO_SMTP_USER,
+    pass: process.env.BREVO_SMTP_PASS,
   }
 });
 
