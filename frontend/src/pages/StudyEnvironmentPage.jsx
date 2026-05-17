@@ -45,7 +45,17 @@ function StudyEnvironmentPage() {
 
   useEffect(() => {
     if (!token) return;
-    socketRef.current = io(API_URL, { auth: { token } });
+    // Replace your socket connection in StudyEnvironmentPage.jsx with this:
+
+socketRef.current = io(API_URL, {
+  auth: { token },
+  transports: ['websocket', 'polling'], // ✅ fallback to polling if websocket fails
+  reconnection: true,
+  reconnectionAttempts: 10,
+  reconnectionDelay: 1000,
+  reconnectionDelayMax: 5000,
+  timeout: 20000,
+});
 
     socketRef.current.on('connect', () => {
       socketRef.current.emit('joinRoom', roomId);
