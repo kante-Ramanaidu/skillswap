@@ -1,15 +1,12 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import '../styles/VideoCall.css';
 
-// Replace ICE_SERVERS in VideoCall.jsx with this:
-
 const ICE_SERVERS = {
   iceServers: [
     { urls: 'stun:stun.l.google.com:19302' },
     { urls: 'stun:stun1.l.google.com:19302' },
     { urls: 'stun:stun2.l.google.com:19302' },
     { urls: 'stun:stun3.l.google.com:19302' },
-    // ✅ Free TURN server from Open Relay Project
     {
       urls: 'turn:openrelay.metered.ca:80',
       username: 'openrelayproject',
@@ -26,6 +23,21 @@ const ICE_SERVERS = {
       credential: 'openrelayproject',
     },
   ],
+};
+
+// ✅ Detect mobile device
+const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+// ✅ Create a black video track for when camera is off
+const createBlackVideoTrack = () => {
+  const canvas = document.createElement('canvas');
+  canvas.width = 640;
+  canvas.height = 480;
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = 'black';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  const stream = canvas.captureStream();
+  return stream.getVideoTracks()[0];
 };
 
 /* ── SVG Icon Components ── */
@@ -114,7 +126,6 @@ const CloseIcon = () => (
   <span style={{ fontSize: '16px', color: '#c0ccd8', lineHeight: 1, userSelect: 'none', fontWeight: 300 }}>✕</span>
 );
 
-/* ── Reusable control button ── */
 function CtrlBtn({ onClick, isOff, isActive, label, children, title }) {
   return (
     <div className="vc-icon-btn-wrap">
@@ -131,31 +142,28 @@ function CtrlBtn({ onClick, isOff, isActive, label, children, title }) {
   );
 }
 
-/* ── Main Component ── */
 function VideoCall({ roomId, partnerName, onClose, socket, incomingOffer: incomingOfferProp }) {
-  // Video element refs
-  const localVideoRef = useRef(null);       // shows camera (or screen during share)
-  const remoteVideoRef = useRef(null);      // shows remote stream
-  const pipCameraRef = useRef(null);        // ✅ NEW: PiP camera overlay during screen share
-  const modalRef = useRef(null);
+  const localVideoRef  = useRef(null);
+  const remoteVideoRef = useRef(null);
+  const pipCameraRef   = useRef(null);
+  const modalRef       = useRef(null);
 
-  // WebRTC refs
-  const peerRef = useRef(null);
-  const localStreamRef = useRef(null);      // camera + mic stream
-  const screenStreamRef = useRef(null);     // screen capture stream
-  const iceCandidateQueue = useRef([]);
-  const isNegotiating = useRef(false);      // ✅ FIX: prevents renegotiation race on startup
-  const callSetupDone = useRef(false);      // ✅ FIX: gate for onnegotiationneeded
+  const peerRef            = useRef(null);
+  const localStreamRef     = useRef(null);
+  const screenStreamRef    = useRef(null);
+  const iceCandidateQueue  = useRef([]);
+  const isNegotiating      = useRef(false);
+  const callSetupDone      = useRef(false);
+  const blackTrackRef      = useRef(null); // ✅ keep ref to black track
 
-  // UI state
-  const [status, setStatus] = useState('idle');
+  const [status, setStatus]           = useState('idle');
   const [incomingOffer, setIncomingOffer] = useState(incomingOfferProp || null);
-  const [micOn, setMicOn] = useState(true);
-  const [camOn, setCamOn] = useState(true);
+  const [micOn, setMicOn]             = useState(true);
+  const [camOn, setCamOn]             = useState(true);
   const [screenSharing, setScreenSharing] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [zoomLevel, setZoomLevel] = useState(1);
+  const [zoomLevel, setZoomLevel]     = useState(1);
 
   useEffect(() => {
     if (incomingOfferProp) {
@@ -164,23 +172,17 @@ function VideoCall({ roomId, partnerName, onClose, socket, incomingOffer: incomi
     }
   }, [incomingOfferProp]);
 
-  /* ── Socket event handlers ── */
   useEffect(() => {
     if (!socket) return;
 
-    const onIncomingCall = ({ offer }) => {
-      setIncomingOffer(offer);
-      setStatus('incoming');
-    };
+    const onIncomingCall = ({ offer }) => { setIncomingOffer(offer); setStatus('incoming'); };
 
     const onCallAnswered = async ({ answer }) => {
       try {
         if (!peerRef.current) return;
         await peerRef.current.setRemoteDescription(new RTCSessionDescription(answer));
         await drainIceCandidateQueue();
-      } catch (e) {
-        console.error('setRemoteDescription (answer) error:', e);
-      }
+      } catch (e) { console.error('setRemoteDescription error:', e); }
     };
 
     const onIceCandidate = async ({ candidate }) => {
@@ -191,22 +193,11 @@ function VideoCall({ roomId, partnerName, onClose, socket, incomingOffer: incomi
         } else {
           iceCandidateQueue.current.push(candidate);
         }
-      } catch (e) {
-        console.error('addIceCandidate error:', e);
-      }
+      } catch (e) { console.error('addIceCandidate error:', e); }
     };
 
-    // ✅ FIX: callEnded handler also resets negotiation flags
-    const onCallEnded = () => {
-      cleanup();
-      setStatus('ended');
-      setTimeout(onClose, 1500);
-    };
-
-    const onCallRejected = () => {
-      cleanup();
-      setStatus('idle');
-    };
+    const onCallEnded = () => { cleanup(); setStatus('ended'); setTimeout(onClose, 1500); };
+    const onCallRejected = () => { cleanup(); setStatus('idle'); };
 
     const onRenegotiateOffer = async ({ offer }) => {
       if (!peerRef.current) return;
@@ -216,20 +207,15 @@ function VideoCall({ roomId, partnerName, onClose, socket, incomingOffer: incomi
         const answer = await peerRef.current.createAnswer();
         await peerRef.current.setLocalDescription(answer);
         socket.emit('renegotiateAnswer', { roomId, answer });
-      } catch (e) {
-        console.error('Renegotiation answer error:', e);
-      } finally {
-        isNegotiating.current = false;
-      }
+      } catch (e) { console.error('Renegotiation answer error:', e); }
+      finally { isNegotiating.current = false; }
     };
 
     const onRenegotiateAnswer = async ({ answer }) => {
       if (!peerRef.current) return;
       try {
         await peerRef.current.setRemoteDescription(new RTCSessionDescription(answer));
-      } catch (e) {
-        console.error('Renegotiation set answer error:', e);
-      }
+      } catch (e) { console.error('Renegotiation set answer error:', e); }
     };
 
     socket.on('incomingCall', onIncomingCall);
@@ -252,21 +238,15 @@ function VideoCall({ roomId, partnerName, onClose, socket, incomingOffer: incomi
   }, [socket, roomId]);
 
   useEffect(() => {
-    const onFsChange = () => {
-      if (!document.fullscreenElement) setIsFullscreen(false);
-    };
+    const onFsChange = () => { if (!document.fullscreenElement) setIsFullscreen(false); };
     document.addEventListener('fullscreenchange', onFsChange);
     return () => document.removeEventListener('fullscreenchange', onFsChange);
   }, []);
 
-  /* ── Helpers ── */
   const drainIceCandidateQueue = async () => {
     for (const c of iceCandidateQueue.current) {
-      try {
-        await peerRef.current?.addIceCandidate(new RTCIceCandidate(c));
-      } catch (e) {
-        console.error('drainIceCandidateQueue error:', e);
-      }
+      try { await peerRef.current?.addIceCandidate(new RTCIceCandidate(c)); }
+      catch (e) { console.error('drainIceCandidateQueue error:', e); }
     }
     iceCandidateQueue.current = [];
   };
@@ -278,9 +258,7 @@ function VideoCall({ roomId, partnerName, onClose, socket, incomingOffer: incomi
     } catch (err) {
       if (err.name === 'NotReadableError' || err.name === 'NotAllowedError') {
         stream = await navigator.mediaDevices.getUserMedia({ video: false, audio: true });
-      } else {
-        throw err;
-      }
+      } else throw err;
     }
     localStreamRef.current = stream;
     if (localVideoRef.current) localVideoRef.current.srcObject = stream;
@@ -288,7 +266,7 @@ function VideoCall({ roomId, partnerName, onClose, socket, incomingOffer: incomi
   };
 
   const createPeer = (stream) => {
-    callSetupDone.current = false; // ✅ reset on every new peer
+    callSetupDone.current = false;
     isNegotiating.current = false;
 
     const peer = new RTCPeerConnection(ICE_SERVERS);
@@ -305,33 +283,26 @@ function VideoCall({ roomId, partnerName, onClose, socket, incomingOffer: incomi
     peer.onconnectionstatechange = () => {
       if (peer.connectionState === 'connected') setStatus('connected');
       if (peer.connectionState === 'failed' || peer.connectionState === 'disconnected') {
-        cleanup();
-        setStatus('ended');
-        setTimeout(onClose, 1500);
+        cleanup(); setStatus('ended'); setTimeout(onClose, 1500);
       }
     };
 
-    // ✅ FIX: only fire renegotiation AFTER initial offer/answer is done
     peer.onnegotiationneeded = async () => {
-      if (!callSetupDone.current) return; // skip during initial setup
-      if (isNegotiating.current) return;  // skip if already mid-negotiation
+      if (!callSetupDone.current) return;
+      if (isNegotiating.current) return;
       try {
         isNegotiating.current = true;
         const offer = await peer.createOffer();
         await peer.setLocalDescription(offer);
         socket.emit('renegotiateOffer', { roomId, offer });
-      } catch (e) {
-        console.error('Renegotiation offer error:', e);
-      } finally {
-        isNegotiating.current = false;
-      }
+      } catch (e) { console.error('Renegotiation offer error:', e); }
+      finally { isNegotiating.current = false; }
     };
 
     peerRef.current = peer;
     return peer;
   };
 
-  /* ── Call actions ── */
   const startCall = async () => {
     setStatus('calling');
     try {
@@ -340,11 +311,8 @@ function VideoCall({ roomId, partnerName, onClose, socket, incomingOffer: incomi
       const offer = await peer.createOffer();
       await peer.setLocalDescription(offer);
       socket.emit('callUser', { roomId, offer });
-      callSetupDone.current = true; // ✅ renegotiation now allowed
-    } catch (err) {
-      console.error('startCall error:', err);
-      setStatus('idle');
-    }
+      callSetupDone.current = true;
+    } catch (err) { console.error('startCall error:', err); setStatus('idle'); }
   };
 
   const answerCall = async () => {
@@ -357,11 +325,8 @@ function VideoCall({ roomId, partnerName, onClose, socket, incomingOffer: incomi
       const answer = await peer.createAnswer();
       await peer.setLocalDescription(answer);
       socket.emit('answerCall', { roomId, answer });
-      callSetupDone.current = true; // ✅ renegotiation now allowed
-    } catch (err) {
-      console.error('answerCall error:', err);
-      setStatus('idle');
-    }
+      callSetupDone.current = true;
+    } catch (err) { console.error('answerCall error:', err); setStatus('idle'); }
   };
 
   const rejectCall = () => {
@@ -378,7 +343,6 @@ function VideoCall({ roomId, partnerName, onClose, socket, incomingOffer: incomi
     setTimeout(onClose, 1000);
   };
 
-  /* ── Cleanup ── */
   const cleanup = () => {
     callSetupDone.current = false;
     isNegotiating.current = false;
@@ -389,72 +353,75 @@ function VideoCall({ roomId, partnerName, onClose, socket, incomingOffer: incomi
     localStreamRef.current = null;
     screenStreamRef.current?.getTracks().forEach(t => t.stop());
     screenStreamRef.current = null;
+    blackTrackRef.current?.stop();
+    blackTrackRef.current = null;
     if (localVideoRef.current) localVideoRef.current.srcObject = null;
     if (remoteVideoRef.current) remoteVideoRef.current.srcObject = null;
-    if (pipCameraRef.current) pipCameraRef.current.srcObject = null; // ✅ clear PiP
+    if (pipCameraRef.current) pipCameraRef.current.srcObject = null;
     setScreenSharing(false);
+    setCamOn(true);
   };
 
-  /* ── Media controls ── */
   const toggleMic = () => {
     const track = localStreamRef.current?.getAudioTracks()[0];
-    if (track) {
-      track.enabled = !track.enabled;
-      setMicOn(track.enabled);
-    }
+    if (track) { track.enabled = !track.enabled; setMicOn(track.enabled); }
   };
 
-  const toggleCam = () => {
+  // ✅ FIX: camera toggle sends black frame to remote when off
+  const toggleCam = async () => {
     const track = localStreamRef.current?.getVideoTracks()[0];
-    if (track) {
-      track.enabled = !track.enabled;
-      setCamOn(track.enabled);
+    if (!track) return;
+
+    const newState = !track.enabled;
+    track.enabled = newState;
+    setCamOn(newState);
+
+    if (peerRef.current) {
+      const sender = peerRef.current.getSenders().find(s => s.track?.kind === 'video');
+      if (sender) {
+        if (!newState) {
+          // ✅ Camera off — send black frame to remote
+          const blackTrack = createBlackVideoTrack();
+          blackTrackRef.current = blackTrack;
+          await sender.replaceTrack(blackTrack);
+        } else {
+          // ✅ Camera on — restore real camera track
+          blackTrackRef.current?.stop();
+          blackTrackRef.current = null;
+          await sender.replaceTrack(track);
+        }
+      }
     }
   };
 
-  // ✅ FIX: fully stable stopScreenShare with useCallback so onended closure is never stale
   const stopScreenShare = useCallback(async () => {
     screenStreamRef.current?.getTracks().forEach(t => t.stop());
     screenStreamRef.current = null;
 
-    // ✅ FIX: restore camera track properly, ensuring localStreamRef is updated
     let camTrack = localStreamRef.current?.getVideoTracks()[0];
 
     if (!camTrack || camTrack.readyState === 'ended') {
-      // Camera track was stopped — re-acquire it
       try {
         const newStream = await navigator.mediaDevices.getUserMedia({ video: true });
         camTrack = newStream.getVideoTracks()[0];
-
-        // Merge into existing localStream (keep audio)
         const audioTracks = localStreamRef.current?.getAudioTracks() ?? [];
         const merged = new MediaStream([camTrack, ...audioTracks]);
         localStreamRef.current = merged;
-      } catch (e) {
-        console.error('Could not restore camera:', e);
-      }
+      } catch (e) { console.error('Could not restore camera:', e); }
     }
 
-    // Replace screen track with camera track in peer connection
     if (peerRef.current && camTrack) {
       const sender = peerRef.current.getSenders().find(s => s.track?.kind === 'video');
-      if (sender) {
-        await sender.replaceTrack(camTrack);
-      }
+      if (sender) await sender.replaceTrack(camTrack);
     }
 
-    // ✅ Restore local preview to camera, clear PiP
     if (localVideoRef.current) localVideoRef.current.srcObject = localStreamRef.current;
     if (pipCameraRef.current) pipCameraRef.current.srcObject = null;
-
     setScreenSharing(false);
   }, []);
 
   const toggleScreenShare = async () => {
-    if (screenSharing) {
-      await stopScreenShare();
-      return;
-    }
+    if (screenSharing) { await stopScreenShare(); return; }
 
     try {
       const screenStream = await navigator.mediaDevices.getDisplayMedia({
@@ -464,55 +431,40 @@ function VideoCall({ roomId, partnerName, onClose, socket, incomingOffer: incomi
       screenStreamRef.current = screenStream;
       const screenTrack = screenStream.getVideoTracks()[0];
 
-      // ✅ FIX: replace only the sender track — do NOT touch localVideoRef here
       if (peerRef.current) {
         const sender = peerRef.current.getSenders().find(s => s.track?.kind === 'video');
         if (sender) {
           await sender.replaceTrack(screenTrack);
         } else {
-          // No video sender yet — add screen track
           peerRef.current.addTrack(screenTrack, screenStream);
         }
       }
 
-      // ✅ Show screen in the main local video box
       if (localVideoRef.current) {
         const audioTracks = localStreamRef.current?.getAudioTracks() ?? [];
         localVideoRef.current.srcObject = new MediaStream([screenTrack, ...audioTracks]);
       }
 
-      // ✅ Show camera face in the PiP overlay
       if (pipCameraRef.current && localStreamRef.current) {
         pipCameraRef.current.srcObject = new MediaStream(
           localStreamRef.current.getVideoTracks()
         );
       }
 
-      // ✅ FIX: use stable useCallback ref — no stale closure
       screenTrack.onended = () => stopScreenShare();
-
       setScreenSharing(true);
     } catch (err) {
-      if (err.name !== 'NotAllowedError') {
-        console.error('Screen share error:', err);
-      }
+      if (err.name !== 'NotAllowedError') console.error('Screen share error:', err);
     }
   };
 
-  const toggleZoom = () => {
-    setZoomLevel(prev => (prev === 1 ? 1.5 : prev === 1.5 ? 2 : 1));
-  };
-
+  const toggleZoom = () => setZoomLevel(prev => (prev === 1 ? 1.5 : prev === 1.5 ? 2 : 1));
   const toggleMinimize = () => setIsMinimized(v => !v);
 
   const toggleFullscreen = async () => {
     if (!isFullscreen) {
-      try {
-        await modalRef.current?.requestFullscreen();
-        setIsFullscreen(true);
-      } catch (e) {
-        console.error(e);
-      }
+      try { await modalRef.current?.requestFullscreen(); setIsFullscreen(true); }
+      catch (e) { console.error(e); }
     } else {
       await document.exitFullscreen();
       setIsFullscreen(false);
@@ -570,7 +522,6 @@ function VideoCall({ roomId, partnerName, onClose, socket, incomingOffer: incomi
         {/* VIDEO AREA */}
         {!isMinimized && (
           <div className="vc-videos">
-            {/* Remote video — full size */}
             <div className="vc-video-remote">
               <video
                 ref={remoteVideoRef}
@@ -587,26 +538,13 @@ function VideoCall({ roomId, partnerName, onClose, socket, incomingOffer: incomi
               {zoomLevel > 1 && <div className="vc-zoom-badge">{zoomLevel}×</div>}
             </div>
 
-            {/* Local video — small PiP bottom-right */}
             <div className="vc-video-local">
-              {/* Main local feed: screen during share, camera otherwise */}
               <video ref={localVideoRef} autoPlay playsInline muted />
-
-              {/* ✅ NEW: Camera face PiP shown on top when screen sharing */}
               {screenSharing && (
-                <video
-                  ref={pipCameraRef}
-                  autoPlay
-                  playsInline
-                  muted
-                  className="vc-cam-pip"
-                />
+                <video ref={pipCameraRef} autoPlay playsInline muted className="vc-cam-pip" />
               )}
-
               {!camOn && !screenSharing && (
-                <div className="vc-cam-off">
-                  <CamIcon off />
-                </div>
+                <div className="vc-cam-off"><CamIcon off /></div>
               )}
               {screenSharing && <div className="vc-screen-badge">Sharing</div>}
             </div>
@@ -625,7 +563,7 @@ function VideoCall({ roomId, partnerName, onClose, socket, incomingOffer: incomi
             <div className="vc-calling-layout">
               <span className="vc-calling-pulse">Calling {partnerName}…</span>
               <div className="vc-end-wrap">
-                <button className="vc-end-btn" onClick={endCall} title="Cancel call" aria-label="Cancel call">
+                <button className="vc-end-btn" onClick={endCall} title="Cancel call">
                   <PhoneEndIcon />
                 </button>
                 <span className="vc-end-label">End Call</span>
@@ -636,15 +574,11 @@ function VideoCall({ roomId, partnerName, onClose, socket, incomingOffer: incomi
           {status === 'incoming' && (
             <div className="vc-incoming-btns">
               <div className="vc-incoming-btn-wrap">
-                <button className="vc-ans-btn" onClick={answerCall} title="Answer" aria-label="Answer call">
-                  <PhoneAnswerIcon />
-                </button>
+                <button className="vc-ans-btn" onClick={answerCall}><PhoneAnswerIcon /></button>
                 <span className="vc-ans-label">Answer</span>
               </div>
               <div className="vc-incoming-btn-wrap">
-                <button className="vc-dec-btn" onClick={rejectCall} title="Decline" aria-label="Decline call">
-                  <PhoneEndIcon />
-                </button>
+                <button className="vc-dec-btn" onClick={rejectCall}><PhoneEndIcon /></button>
                 <span className="vc-dec-label">Decline</span>
               </div>
             </div>
@@ -664,9 +598,12 @@ function VideoCall({ roomId, partnerName, onClose, socket, incomingOffer: incomi
                 <CamIcon off={!camOn} />
               </CtrlBtn>
 
-              <CtrlBtn onClick={toggleScreenShare} isActive={screenSharing} title={screenSharing ? 'Stop sharing' : 'Share screen'} label={screenSharing ? 'Stop' : 'Share'}>
-                <ScreenIcon active={screenSharing} />
-              </CtrlBtn>
+              {/* ✅ Hide screen share on mobile — not supported */}
+              {!isMobile && (
+                <CtrlBtn onClick={toggleScreenShare} isActive={screenSharing} title={screenSharing ? 'Stop sharing' : 'Share screen'} label={screenSharing ? 'Stop' : 'Share'}>
+                  <ScreenIcon active={screenSharing} />
+                </CtrlBtn>
+              )}
 
               <CtrlBtn onClick={toggleZoom} title={`Zoom (${zoomLevel}×)`} label={`${zoomLevel}×`}>
                 <ZoomIcon />
@@ -677,7 +614,7 @@ function VideoCall({ roomId, partnerName, onClose, socket, incomingOffer: incomi
               </CtrlBtn>
 
               <div className="vc-end-wrap">
-                <button className="vc-end-btn" onClick={endCall} title="End call" aria-label="End call">
+                <button className="vc-end-btn" onClick={endCall} title="End call">
                   <PhoneEndIcon />
                 </button>
                 <span className="vc-end-label">End</span>
