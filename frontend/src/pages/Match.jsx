@@ -77,7 +77,7 @@ function Match() {
               </div>
               <div className="action-area">
                 {friends.includes(user.id) ? (
-                  <span className="friend-status success">✅ Friends</span>
+                  <span className="friend-status success"> Friends</span>
                 ) : pendingRequests.includes(user.id) ? (
                   <span className="friend-status pending">⏳ Request Sent</span>
                 ) : (

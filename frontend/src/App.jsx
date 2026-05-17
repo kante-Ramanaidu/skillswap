@@ -4,6 +4,8 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import Signup from "./pages/Signup";
 import Login from "./pages/Login";
+import VerifyEmail from "./pages/VerifyEmail";
+import CompleteProfile from "./pages/CompleteProfile";
 
 // Protected Layout + Pages
 import PrivateLayout from "./components/PrivateLayout";
@@ -13,12 +15,9 @@ import Chat from "./components/Chat";
 import StudyEnvironmentPage from "./pages/StudyEnvironmentPage";
 import FriendRequests from "./pages/FriendRequests";
 import FriendsPage from "./pages/FriendsPage";
-import ProgressPage from "./pages/ProgressPage"; 
+import ProgressPage from "./pages/ProgressPage";
 import HistoryPage from "./pages/HistoryPage";
-import ProfilePage from './pages/ProfilePage'; // Adjust path if it's in a different folder
-import VerifyEmail from "./pages/VerifyEmail";
-
-<Route path="/history" element={<HistoryPage />} />
+import ProfilePage from './pages/ProfilePage';
 
 function App() {
   return (
@@ -29,7 +28,8 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/verify-email" element={<VerifyEmail />} /> {/* ✅ Email Verification Page */}
+        <Route path="/verify-email" element={<VerifyEmail />} />
+        <Route path="/complete-profile" element={<CompleteProfile />} /> {/* ✅ public — Google new users */}
 
         {/* Private Routes */}
         <Route element={<PrivateLayout />}>
@@ -39,10 +39,9 @@ function App() {
           <Route path="/chat/:roomId" element={<Chat />} />
           <Route path="/friend-requests" element={<FriendRequests />} />
           <Route path="/friends" element={<FriendsPage />} />
-          <Route path="/progress/:userId" element={<ProgressPage />} /> {/* ✅ Session History */}
+          <Route path="/progress/:userId" element={<ProgressPage />} />
           <Route path="/history" element={<HistoryPage />} />
           <Route path="/profile" element={<ProfilePage />} />
-
         </Route>
 
       </Routes>

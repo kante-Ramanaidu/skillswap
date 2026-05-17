@@ -1,17 +1,32 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import axios from 'axios';
-import AuthFormInput from '../components/AuthFormInput';
 import '../styles/Auth.css';
 
 const API_URL = import.meta.env.VITE_API_BASE_URL;
 
-function Signup() {
+// ✅ Helper to decode JWT and get userId
+const getUserIdFromToken = (token) => {
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    return payload.id;
+  } catch {
+    return null;
+  }
+};
+
+function CompleteProfile() {
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
-  const [form, setForm] = useState({ name: '', email: '', password: '', phone: '' });
+  const token = searchParams.get('token');
+  const name  = searchParams.get('name');
+  const email = searchParams.get('email');
+
   const predefinedTeachSkills = ['React', 'Python', 'JavaScript'];
   const predefinedLearnSkills = ['DSA', 'Node.js', 'DevOps'];
+
+  const [phone, setPhone] = useState('');
   const [skillsToTeach, setSkillsToTeach] = useState([]);
   const [skillsToLearn, setSkillsToLearn] = useState([]);
   const [customTeach, setCustomTeach] = useState('');
@@ -32,65 +47,53 @@ function Signup() {
   };
 
   const removeSkill = (skill, list, setList) => setList(list.filter(s => s !== skill));
-  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
-  const handleSignup = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
 
-    if (!form.name || !form.email || !form.password || !form.phone) {
-      setError('Please fill in all required fields.');
-      return;
-    }
-    if (skillsToTeach.length === 0 || skillsToLearn.length === 0) {
-      setError('Please select at least one skill to teach and one to learn.');
-      return;
-    }
+    if (!phone) return setError('Phone number is required.');
+    if (skillsToTeach.length === 0 || skillsToLearn.length === 0)
+      return setError('Please select at least one skill to teach and one to learn.');
 
     setLoading(true);
     try {
-      const res = await axios.post(`${API_URL}/api/auth/signup`, {
-        ...form, skillsToTeach, skillsToLearn
+      const res = await axios.post(`${API_URL}/api/auth/complete-profile`, {
+        token, phone, skillsToTeach, skillsToLearn
       });
-      // ✅ Save token + userId + user
+
+      // ✅ Save token + userId
       localStorage.setItem('token', res.data.token);
       localStorage.setItem('user', JSON.stringify(res.data.user));
       localStorage.setItem('userId', String(res.data.user.id));
       navigate('/dashboard');
+
     } catch (err) {
-      setError(err.response?.data?.message || 'Signup failed. Please try again.');
+      setError(err.response?.data?.message || 'Failed. Please try again.');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleGoogleSignup = () => {
-    window.location.href = `${API_URL}/api/auth/google`;
-  };
-
   return (
     <div className="auth-page">
       <div className="auth-card">
-        <h2 className="auth-title">Sign Up</h2>
-        <p className="auth-subtitle">Create your account and start swapping skills today</p>
+        <h2 className="auth-title">Complete Your Profile</h2>
+        <p className="auth-subtitle">Welcome {name}! Just a few more details.</p>
+        <p style={{ color: '#64748b', fontSize: '13px', marginBottom: '16px' }}>{email}</p>
 
-        {/* ✅ Google Sign In Button */}
-        <button className="google-btn" onClick={handleGoogleSignup} type="button">
-          <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" width="20" />
-          Continue with Google
-        </button>
+        <form onSubmit={handleSubmit}>
 
-        <div className="auth-divider">
-          <span className="divider-line" />
-          <span className="divider-text">OR</span>
-          <span className="divider-line" />
-        </div>
-
-        <form onSubmit={handleSignup}>
-          <AuthFormInput label="Name" type="text" name="name" value={form.name} onChange={handleChange} />
-          <AuthFormInput label="Email" type="email" name="email" value={form.email} onChange={handleChange} />
-          <AuthFormInput label="Password" type="password" name="password" value={form.password} onChange={handleChange} />
-          <AuthFormInput label="Phone Number" type="text" name="phone" value={form.phone} onChange={handleChange} />
+          <div className="auth-input-group">
+            <label className="auth-label">Phone Number</label>
+            <input
+              type="text"
+              className="auth-input"
+              placeholder="Enter your phone number"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+            />
+          </div>
 
           {/* Skills to Teach */}
           <div className="skill-section">
@@ -145,17 +148,13 @@ function Signup() {
           {error && <p className="error-message">{error}</p>}
 
           <button type="submit" className="auth-button" disabled={loading}>
-            {loading ? <span className="btn-loader"><span className="spinner" /> Creating account...</span> : 'Create Account'}
+            {loading ? 'Saving...' : 'Complete Profile'}
           </button>
-        </form>
 
-        <p className="auth-redirect">
-          Already have an account?{' '}
-          <span className="auth-link" onClick={() => navigate('/login')}>Login</span>
-        </p>
+        </form>
       </div>
     </div>
   );
 }
 
-export default Signup;
+export default CompleteProfile;

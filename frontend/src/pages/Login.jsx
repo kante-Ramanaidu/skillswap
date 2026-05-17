@@ -1,88 +1,99 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import AuthFormInput from '../components/AuthFormInput';
+import { useState, useEffect } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import axios from 'axios';
+import AuthFormInput from '../components/AuthFormInput';
 import '../styles/Auth.css';
 
+const API_URL = import.meta.env.VITE_API_BASE_URL;
+
+// ✅ Helper to decode JWT and get userId
+const getUserIdFromToken = (token) => {
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    return payload.id;
+  } catch {
+    return null;
+  }
+};
+
 function Login() {
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [form, setForm] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
-  const [rememberMe, setRememberMe] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const navigate = useNavigate();
+  // ✅ Handle token from Google OAuth redirect
+  useEffect(() => {
+    const token = searchParams.get('token');
+    const err   = searchParams.get('error');
 
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
+    if (token) {
+      localStorage.setItem('token', token);
+      const userId = getUserIdFromToken(token);
+      if (userId) localStorage.setItem('userId', String(userId));
+      navigate('/dashboard');
+    }
+    if (err) {
+      setError('Google sign in failed. Please try again.');
+    }
+  }, []);
+
+  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setError('');
-    setSuccess('');
-
-    if (!form.email || !form.password) {
-      setError('Please fill in both email and password.');
-      return;
-    }
-
+    setLoading(true);
     try {
-      const API_URL = import.meta.env.VITE_API_BASE_URL;
       const res = await axios.post(`${API_URL}/api/auth/login`, form);
-
       localStorage.setItem('token', res.data.token);
-      localStorage.setItem('userId', res.data.user.id);
-
-      setSuccess('Login successful');
-      setTimeout(() => navigate('/dashboard'), 1000);
+      localStorage.setItem('user', JSON.stringify(res.data.user));
+      localStorage.setItem('userId', String(res.data.user.id)); // ✅ save userId
+      navigate('/dashboard');
     } catch (err) {
-      setError(err.response?.data?.message || 'Login failed.');
+      setError(err.response?.data?.message || 'Login failed. Please try again.');
+    } finally {
+      setLoading(false);
     }
+  };
+
+  const handleGoogleLogin = () => {
+    window.location.href = `${API_URL}/api/auth/google`;
   };
 
   return (
     <div className="auth-page">
       <div className="auth-card">
         <h2 className="auth-title">Login</h2>
-        <h6 className="auth-welcome">Welcome back</h6>
-        <p className="auth-subtitle">Login to continue learning and teaching skills</p>
+        <p className="auth-subtitle">Welcome back! Sign in to continue.</p>
 
-        <form onSubmit={handleLogin}>
-          <AuthFormInput
-            label="Email"
-            type="email"
-            name="email"
-            value={form.email}
-            onChange={handleChange}
-          />
+        {/* ✅ Google Sign In Button */}
+        <button className="google-btn" onClick={handleGoogleLogin} type="button">
+          <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" width="20" />
+          Continue with Google
+        </button>
 
-          <AuthFormInput
-            label="Password"
-            type="password"
-            name="password"
-            value={form.password}
-            onChange={handleChange}
-          />
-
-        
-
-          {error && <p className="error-message">{error}</p>}
-          {success && <p className="success-message">{success}</p>}
-
-          <button type="submit" className="auth-button">Login</button>
-        </form>
-
-        {/* Divider */}
         <div className="auth-divider">
           <span className="divider-line" />
           <span className="divider-text">OR</span>
           <span className="divider-line" />
         </div>
 
-        {/* Sign up redirect */}
+        <form onSubmit={handleLogin}>
+          <AuthFormInput label="Email" type="email" name="email" value={form.email} onChange={handleChange} />
+          <AuthFormInput label="Password" type="password" name="password" value={form.password} onChange={handleChange} />
+
+          {error && <p className="error-message">{error}</p>}
+
+          <button type="submit" className="auth-button" disabled={loading}>
+            {loading ? <span className="btn-loader"><span className="spinner" /> Logging in...</span> : 'Login'}
+          </button>
+        </form>
+
         <p className="auth-redirect">
           Don't have an account?{' '}
-          <span className="auth-link" onClick={() => navigate('/signup')}>Sign up</span>
+          <span className="auth-link" onClick={() => navigate('/signup')}>Sign Up</span>
         </p>
       </div>
     </div>

@@ -476,6 +476,24 @@
   animation: spin 0.7s linear infinite;
   flex-shrink: 0;
 }
+.google-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 12px;
+  background: rgba(255,255,255,0.05);
+  color: #f1f5f9;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  margin-bottom: 16px;
+  transition: background 0.18s;
+}
+.google-btn:hover { background: rgba(255,255,255,0.1); }
 
 @keyframes spin {
   to { transform: rotate(360deg); }

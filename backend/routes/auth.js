@@ -4,13 +4,11 @@ dotenv.config();
 import express from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import { Resend } from 'resend';
+import passport from 'passport';
+import '../config/passport.js';
 import pool from '../config/db.js';
 
 const router = express.Router();
-
-// ✅ Resend client — uses HTTP API, works on Render free tier
-const resend = new Resend(process.env.RESEND_API_KEY);
 
 // ✅ SIGNUP
 router.post('/signup', async (req, res) => {
@@ -39,49 +37,19 @@ router.post('/signup', async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const result = await pool.query(
-      `INSERT INTO users (name, email, password, phone, skills_to_teach, skills_to_learn, created_at)
-       VALUES ($1, $2, $3, $4, $5, $6, NOW())
+      `INSERT INTO users (name, email, password, phone, skills_to_teach, skills_to_learn, is_verified, created_at)
+       VALUES ($1, $2, $3, $4, $5, $6, TRUE, NOW())
        RETURNING id, name, email`,
       [name, email, hashedPassword, phone, skillsToTeach, skillsToLearn]
     );
 
     const user = result.rows[0];
-
-    // ✅ Generate email verification token
-    const verifyToken = jwt.sign(
-      { id: user.id, email: user.email },
-      process.env.JWT_SECRET,
-      { expiresIn: '24h' }
-    );
-
-    // ✅ Send verification email via Resend
-    const verifyLink = `${process.env.CLIENT_URL}/verify-email?token=${verifyToken}`;
-
-    await resend.emails.send({
-      from: 'onboarding@resend.dev',
-      to: user.email,
-      subject: 'Verify your SkillSwap email',
-      html: `
-        <div style="font-family:Inter,sans-serif;max-width:480px;margin:auto;padding:32px;background:#0f0f1a;color:#e2e8f0;border-radius:16px;">
-          <h2 style="background:linear-gradient(90deg,#4fffcb,#00d4ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px;">
-            Welcome to SkillSwap, ${user.name}! 👋
-          </h2>
-          <p style="color:#94a3b8;margin-bottom:24px;">
-            You're one step away. Click the button below to verify your email address and activate your account.
-          </p>
-          <a href="${verifyLink}"
-            style="display:inline-block;background:linear-gradient(90deg,#00e6b4,#00b4d8);color:#0f172a;padding:12px 28px;text-decoration:none;border-radius:10px;font-weight:700;font-size:15px;">
-            Verify My Email
-          </a>
-          <p style="color:#475569;font-size:13px;margin-top:24px;">
-            This link expires in 24 hours. If you didn't sign up, you can ignore this email.
-          </p>
-        </div>
-      `
-    });
+    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '1d' });
 
     res.status(201).json({
-      message: 'Signup successful! Please check your email to verify your account.'
+      message: 'Signup successful!',
+      token,
+      user: { id: user.id, name: user.name, email: user.email }
     });
 
   } catch (err) {
@@ -90,55 +58,27 @@ router.post('/signup', async (req, res) => {
   }
 });
 
-// ✅ VERIFY EMAIL
-router.get('/verify-email', async (req, res) => {
-  const { token } = req.query;
-
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-    await pool.query(
-      'UPDATE users SET is_verified = TRUE WHERE id = $1',
-      [decoded.id]
-    );
-
-    res.json({ message: 'Email verified successfully! You can now log in.' });
-
-  } catch (err) {
-    console.error('Verify error:', err.message);
-    res.status(400).json({ message: 'Invalid or expired verification link.' });
-  }
-});
-
 // ✅ LOGIN
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
-
   try {
     if (!email || !password)
       return res.status(400).json({ message: 'Email and password are required' });
 
-    const result = await pool.query(
-      'SELECT * FROM users WHERE email = $1', [email]
-    );
+    const result = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
     const user = result.rows[0];
 
     if (!user)
       return res.status(400).json({ message: 'Invalid credentials' });
 
-    // ✅ Block unverified users
-    if (!user.is_verified)
-      return res.status(403).json({ message: 'Please verify your email before logging in.' });
+    if (!user.password)
+      return res.status(400).json({ message: 'This account uses Google Sign In. Please use that instead.' });
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch)
       return res.status(400).json({ message: 'Invalid credentials' });
 
-    const token = jwt.sign(
-      { id: user.id },
-      process.env.JWT_SECRET,
-      { expiresIn: '1d' }
-    );
+    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '1d' });
 
     res.json({
       message: 'Login successful',
@@ -149,6 +89,73 @@ router.post('/login', async (req, res) => {
   } catch (err) {
     console.error('Login error:', err.message);
     res.status(500).json({ message: 'Server error. Please try again.' });
+  }
+});
+
+// ✅ GOOGLE OAuth — Step 1: redirect to Google
+router.get('/google',
+  passport.authenticate('google', {
+    scope: ['profile', 'email'],
+    session: false  // ✅ no session needed — we use JWT
+  })
+);
+
+// ✅ GOOGLE OAuth — Step 2: callback
+router.get('/google/callback',
+  passport.authenticate('google', {
+    failureRedirect: `${process.env.CLIENT_URL}/login?error=google_failed`,
+    session: false  // ✅ no session needed — we use JWT
+  }),
+  async (req, res) => {
+    try {
+      const user = req.user;
+      const needsProfile = !user.phone || !user.skills_to_teach || user.skills_to_teach.length === 0;
+      const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '1d' });
+
+      if (needsProfile) {
+        return res.redirect(
+          `${process.env.CLIENT_URL}/complete-profile?token=${token}&name=${encodeURIComponent(user.name)}&email=${encodeURIComponent(user.email)}`
+        );
+      }
+
+      res.redirect(`${process.env.CLIENT_URL}/dashboard?token=${token}`);
+
+    } catch (err) {
+      console.error('Google callback error:', err.message);
+      res.redirect(`${process.env.CLIENT_URL}/login?error=server_error`);
+    }
+  }
+);
+
+// ✅ COMPLETE PROFILE — for new Google users
+router.post('/complete-profile', async (req, res) => {
+  try {
+    let { token, phone, skillsToTeach, skillsToLearn } = req.body;
+
+    if (!token || !phone)
+      return res.status(400).json({ message: 'All fields are required' });
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    if (typeof skillsToTeach === 'string')
+      skillsToTeach = skillsToTeach.split(',').map(s => s.trim());
+    if (typeof skillsToLearn === 'string')
+      skillsToLearn = skillsToLearn.split(',').map(s => s.trim());
+
+    await pool.query(
+      `UPDATE users SET phone = $1, skills_to_teach = $2, skills_to_learn = $3 WHERE id = $4`,
+      [phone, skillsToTeach, skillsToLearn, decoded.id]
+    );
+
+    const result = await pool.query('SELECT id, name, email FROM users WHERE id = $1', [decoded.id]);
+    const user = result.rows[0];
+    const newToken = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '1d' });
+
+    res.json({ message: 'Profile completed!', token: newToken, user });
+
+  } catch (err) {
+    console.error('Complete profile error:', err.message);
+    res.status(500).json({ message: 'Failed to complete profile.' });
   }
 });
 
